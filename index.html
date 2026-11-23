@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#071124" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="طلاب MCI" />
+  <title>طلاب MCI — الفرقة الأولى • دفعة 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      font-family: 'Cairo', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .surface-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 8px 24px -12px rgba(15, 23, 42, 0.08);
+    }
+
+    .choice-btn {
+      transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .choice-btn:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-200 selection:text-slate-950">
+
+  <!-- =====================================================================
+       البار العلوي + زر قناة الواتساب + شريط التنقل بين الأقسام
+  ====================================================================== -->
+  <header class="sticky top-0 z-40 bg-[#071124] text-white border-b border-white/10 shadow-md">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 min-h-16 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 font-black text-sm flex items-center justify-center shadow shrink-0">
+          MCI
+        </div>
+        <div>
+          <span class="block text-sm sm:text-lg font-black text-white">
+            طلاب MCI • دفعة 2026
+          </span>
+          <span class="block text-[11px] text-slate-300 font-semibold">
+            MCI Academy بالتجمع الأول • بكالوريوس تجارة (الفرقة الأولى)
+          </span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <a
+          href="https://whatsapp.com/channel/0029VbDoAyV1t90Xere28X0B"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/30 shadow-sm transition"
+        >
+          <span>انضمام لقناة الواتس</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- شريط التنقل الرئيسي بين أقسام المنصة -->
+    <nav class="bg-[#0c1b36] border-t border-white/10">
+      <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar" id="main-nav">
+        <button type="button" data-tab="alerts" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          🔔 التنبيهات
+        </button>
+        <button type="button" data-tab="lectures" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          📚 ملخصات المحاضرات
+        </button>
+        <button type="button" data-tab="assignments" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          📝 التكليفات (شيت / بحث / مناقشة)
+        </button>
+        <button type="button" data-tab="weekly" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          🎯 الأسئلة الأسبوعية
+        </button>
+        <button type="button" data-tab="midterm" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          📌 أسئلة الميدتيرم
+        </button>
+      </div>
+    </nav>
+
+    <!-- شريط تقدم الاختبار (يظهر أثناء حل أي اختبار) -->
+    <div id="quiz-progress-strip" class="hidden bg-[#102447] border-t border-white/10">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-2">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-200 mb-1.5">
+          <span id="progress-label">تمت الإجابة على 0 من 0</span>
+          <span id="progress-pct" class="text-amber-300 font-black">0%</span>
+        </div>
+        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-amber-400 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- إشعار تنبيهي خفيف -->
+  <div id="toast-box" class="fixed bottom-5 left-4 right-4 sm:left-auto sm:right-6 z-50 hidden max-w-md">
+    <div class="bg-[#071124] text-white border border-amber-400/50 rounded-2xl px-4 py-3 shadow-2xl flex items-center justify-between gap-3">
+      <p id="toast-msg" class="text-xs sm:text-sm font-bold leading-relaxed"></p>
+      <button type="button" id="toast-close" class="text-amber-300 hover:text-white font-black text-sm shrink-0 cursor-pointer">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       الحاوية الرئيسية للمحتوى
+  ====================================================================== -->
+  <main id="app-root" class="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8"></main>
+
+  <!-- =====================================================================
+       تذييل الصفحة وحقوق التصميم
+  ====================================================================== -->
+  <footer class="bg-[#071124] text-slate-300 border-t border-white/10 mt-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-bold text-center sm:text-right">
+      <div>
+        حقوق تصميم الموقع للطالب <span class="text-amber-300 font-black">محمود احمد</span>
+      </div>
+      <div dir="ltr" class="text-slate-200 font-extrabold">
+        01289139880
+      </div>
+    </div>
+  </footer>
+
+  <!-- استدعاء ملف البيانات المنفصل -->
+  <script src="data.js"></script>
+
+  <script>
+    // =====================================================================
+    // 1. الثوابت الأساسية للمعهد والمواد والشُعب
+    // =====================================================================
+    const SUBJECTS_LIST = [
+      { id: "all", name: "كل المواد" },
+      { id: "english", name: "مبادئ إنجليزي" },
+      { id: "economics", name: "مبادئ اقتصاد" },
+      { id: "accounting", name: "مبادئ محاسبة مالية" },
+      { id: "mgmt", name: "مبادئ إدارة أعمال" },
+      { id: "law", name: "مبادئ قانون" },
+      { id: "politics", name: "مبادئ علوم سياسية" }
+    ];
+
+    const BRANCHES_LIST = [
+      { id: "all", name: "كل الشُعب" },
+      { id: "mis", name: "نظم معلومات إدارية" },
+      { id: "acc", name: "محاسبة" },
+      { id: "mkt", name: "تسويق" }
+    ];
+
+    const TASK_TYPES_LIST = [
+      { id: "all", name: "الكل" },
+      { id: "شيت", name: "شيت" },
+      { id: "بحث", name: "بحث" },
+      { id: "مناقشة", name: "مناقشة" }
+    ];
+
+    // ضمان وجود البيانات حتى لو تأخر تحميل data.js لأي سبب
+    const DATA = window.MCI_DATA || {
+      midtermDate: "2026-11-24T00:00:00",
+      alerts: [],
+      lectures: [],
+      assignments: [],
+      weeklyQuizzes: [],
+      midtermCourses: {},
+      finishedMidtermCourses: []
+    };
+
+    // =====================================================================
+    // 2. حالة التطبيق العامة
+    // =====================================================================
+    const state = {
+      activeTab: "alerts", // 'alerts' | 'lectures' | 'assignments' | 'weekly' | 'midterm'
+
+      // فلاتر الملخصات
+      lectureSubject: "all",
+      lectureBranch: "all",
+
+      // فلاتر التكليفات
+      assignBranch: "all",
+      assignSubject: "all",
+      assignType: "all",
+
+      // فلاتر التنبيهات
+      alertSubject: "all",
+
+      // حالة الاختبار التفاعلي (تعمل لكل من الأسئلة الأسبوعية والميدتيرم)
+      quizSource: null, // 'weekly' | 'midterm'
+      quizView: "setup", // 'setup' | 'quiz' | 'result'
+      selectedWeeklyId: "",
+      midtermSubjectId: "politics",
+      sectionFilter: "all",
+      questionCountMode: "all",
+      gradingMode: "end",
+      questions: [],
+      currentIdx: 0,
+      answers: {},
+      locked: {},
+      resultFilter: "all"
+    };
+
+    const appEl = document.getElementById("app-root");
+    const progressStrip = document.getElementById("quiz-progress-strip");
+    const progressLabel = document.getElementById("progress-label");
+    const progressPct = document.getElementById("progress-pct");
+    const progressBar = document.getElementById("progress-bar");
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const box = document.getElementById("toast-box");
+      const text = document.getElementById("toast-msg");
+      if (!box || !text) return;
+      text.textContent = msg;
+      box.classList.remove("hidden");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => box.classList.add("hidden"), 3000);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function getSubjectName(id) {
+      const found = SUBJECTS_LIST.find((s) => s.id === id);
+      return found ? found.name : id;
+    }
+
+    function getBranchName(id) {
+      const found = BRANCHES_LIST.find((b) => b.id === id);
+      return found ? found.name : id;
+    }
+
+    // =====================================================================
+    // 3. تحديث شريط التنقل وشريط التقدم
+    // =====================================================================
+    function updateNavTabs() {
+      document.querySelectorAll(".nav-tab").forEach((btn) => {
+        const tab = btn.getAttribute("data-tab");
+        if (tab === state.activeTab) {
+          btn.className = "nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 shadow transition cursor-pointer";
+        } else {
+          btn.className = "nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 text-slate-200 hover:bg-white/20 transition cursor-pointer";
+        }
+      });
+    }
+
+    function updateProgressBar() {
+      const isQuizActive =
+        (state.activeTab === "midterm" || state.activeTab === "weekly") &&
+        state.quizView === "quiz";
+
+      if (!isQuizActive) {
+        progressStrip.classList.add("hidden");
+        return;
+      }
+
+      progressStrip.classList.remove("hidden");
+      const total = state.questions.length;
+      const answered = state.questions.filter((q) => state.answers[q.id] !== undefined).length;
+      const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+      progressLabel.textContent = `تمت الإجابة على ${answered} من ${total} سؤال`;
+      progressPct.textContent = `${pct}%`;
+      progressBar.style.width = `${pct}%`;
+    }
+
+    // =====================================================================
+    // 4. قسم التنبيهات العاجلة والملاحظات
+    // =====================================================================
+    function renderAlertsTab() {
+      const list = (DATA.alerts || []).filter((item) => {
+        if (state.alertSubject !== "all" && item.subjectId !== state.alertSubject && item.subjectId !== "all") {
+          return false;
+        }
+        return true;
+      });
+
+      appEl.innerHTML = `
+        <div class="space-y-5">
+          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
+            <h1 class="text-xl sm:text-2xl font-black text-white">🔔 التنبيهات وملاحظات الدكاترة</h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              أهم التنبيهات حول مواعيد المراجعات، تعديلات الجدول، والنقاط المهمة التي أكد عليها الدكاترة في المحاضرات.
+            </p>
+          </div>
+
+          <!-- فلتر المواد -->
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            ${SUBJECTS_LIST.map(
+              (s) => `
+                <button
+                  type="button"
+                  data-alert-subj="${s.id}"
+                  class="shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                    state.alertSubject === s.id
+                      ? "bg-[#071124] text-white border-[#071124]"
+                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                  }"
+                >
+                  ${s.name}
+                </button>
+              `
+            ).join("")}
+          </div>
+
+          <!-- قائمة التنبيهات -->
+          <div class="space-y-3.5">
+            ${
+              list.length === 0
+                ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                    لا توجد تنبيهات مسجلة لهذا التصنيف حالياً.
+                  </div>`
+                : list
+                    .map(
+                      (item) => `
+                        <div class="surface-card rounded-2xl p-4 sm:p-5 border-r-4 ${
+                          item.important ? "border-r-rose-600 bg-rose-50/20" : "border-r-amber-400"
+                        } space-y-2">
+                          <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                              ${
+                                item.important
+                                  ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white">تنبيه هام</span>`
+                                  : `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900">ملاحظة</span>`
+                              }
+                              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-800">
+                                ${escapeHtml(getSubjectName(item.subjectId || "all"))}
+                              </span>
+                              ${
+                                item.branch && item.branch !== "all"
+                                  ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
+                                      شعبة: ${escapeHtml(getBranchName(item.branch))}
+                                    </span>`
+                                  : ""
+                              }
+                            </div>
+                            <span class="text-xs font-bold text-slate-500">${escapeHtml(item.date || "")}</span>
+                          </div>
+
+                          <h2 class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(item.title)}</h2>
+                          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(item.details)}</p>
+                        </div>
+                      `
+                    )
+                    .join("")
+            }
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll("[data-alert-subj]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.alertSubject = btn.getAttribute("data-alert-subj");
+          render();
+        });
+      });
+    }
+
+    // =====================================================================
+    // 5. قسم ملخصات المحاضرات
+    // =====================================================================
+    function renderLecturesTab() {
+      const list = (DATA.lectures || []).filter((lec) => {
+        if (state.lectureSubject !== "all" && lec.subjectId !== state.lectureSubject) return false;
+        if (state.lectureBranch !== "all" && lec.branch && lec.branch !== "all" && lec.branch !== state.lectureBranch) {
+          return false;
+        }
+        return true;
+      });
+
+      appEl.innerHTML = `
+        <div class="space-y-5">
+          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
+            <h1 class="text-xl sm:text-2xl font-black text-white">📚 ملخصات المحاضرات</h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              ملخصات منظمة لكل محاضرة حسب المادة. ملحوظة: مادة <strong>مبادئ إدارة الأعمال</strong> يدرسها في نظم <strong>د. أحمد علي</strong> وفي محاسبة وتسويق <strong>د. نجلاء</strong>.
+            </p>
+          </div>
+
+          <!-- فلاتر المادة والشعبة -->
+          <div class="surface-card rounded-2xl p-4 space-y-3">
+            <div>
+              <div class="text-xs font-black text-slate-600 mb-2">تصفية حسب المادة:</div>
+              <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                ${SUBJECTS_LIST.map(
+                  (s) => `
+                    <button
+                      type="button"
+                      data-lec-subj="${s.id}"
+                      class="shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                        state.lectureSubject === s.id
+                          ? "bg-[#071124] text-white border-[#071124]"
+                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                      }"
+                    >
+                      ${s.name}
+                    </button>
+                  `
+                ).join("")}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs font-black text-slate-600 mb-2">تصفية حسب الشعبة (خاصة لإدارة الأعمال):</div>
+              <div class="flex flex-wrap items-center gap-2">
+                ${BRANCHES_LIST.map(
+                  (b) => `
+                    <button
+                      type="button"
+                      data-lec-branch="${b.id}"
+                      class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                        state.lectureBranch === b.id
+                          ? "bg-amber-400 text-slate-950 border-amber-500"
+                          : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                      }"
+                    >
+                      ${b.name}
+                    </button>
+                  `
+                ).join("")}
+              </div>
+            </div>
+          </div>
+
+          <!-- بطاقات المحاضرات -->
+          <div class="space-y-4">
+            ${
+              list.length === 0
+                ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                    لا توجد ملخصات مضافة لهذا التصنيف بعد.
+                  </div>`
+                : list
+                    .map(
+                      (lec) => `
+                        <article class="surface-card rounded-2xl p-5 space-y-3">
+                          <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                              <span class="px-3 py-1 rounded-xl text-xs font-black bg-[#071124] text-white">
+                                ${escapeHtml(getSubjectName(lec.subjectId))}
+                              </span>
+                              <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-950 border border-amber-200">
+                                ${escapeHtml(lec.lectureTitle)}
+                              </span>
+                              ${
+                                lec.doctor
+                                  ? `<span class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 text-slate-800">
+                                      ${escapeHtml(lec.doctor)}
+                                    </span>`
+                                  : ""
+                              }
+                              ${
+                                lec.branch && lec.branch !== "all"
+                                  ? `<span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
+                                      ${escapeHtml(getBranchName(lec.branch))}
+                                    </span>`
+                                  : ""
+                              }
+                            </div>
+                            <span class="text-xs font-bold text-slate-500">${escapeHtml(lec.date || "")}</span>
+                          </div>
+
+                          <div class="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line bg-slate-50/80 p-4 rounded-xl border border-slate-200/80">
+                            ${escapeHtml(lec.summary)}
+                          </div>
+
+                          ${
+                            lec.pdfLink
+                              ? `<div>
+                                  <a
+                                    href="${escapeHtml(lec.pdfLink)}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black bg-indigo-700 hover:bg-indigo-800 text-white transition"
+                                  >
+                                    <span>فتح ملف الملخص / PDF</span>
+                                    <span>↗</span>
+                                  </a>
+                                </div>`
+                              : ""
+                          }
+                        </article>
+                      `
+                    )
+                    .join("")
+            }
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll("[data-lec-subj]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.lectureSubject = btn.getAttribute("data-lec-subj");
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-lec-branch]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.lectureBranch = btn.getAttribute("data-lec-branch");
+          render();
+        });
+      });
+    }
+
+    // =====================================================================
+    // 6. قسم التكليفات (شيت - بحث - مناقشة) مقسّم حسب الشُعب
+    // =====================================================================
+    function renderAssignmentsTab() {
+      const list = (DATA.assignments || []).filter((item) => {
+        if (state.assignBranch !== "all" && item.branch !== "all" && item.branch !== state.assignBranch) {
+          return false;
+        }
+        if (state.assignSubject !== "all" && item.subjectId !== state.assignSubject) {
+          return false;
+        }
+        if (state.assignType !== "all" && item.type !== state.assignType) {
+          return false;
+        }
+        return true;
+      });
+
+      const typeBadgeColor = (type) => {
+        if (type === "شيت") return "bg-sky-100 text-sky-900 border-sky-200";
+        if (type === "بحث") return "bg-purple-100 text-purple-900 border-purple-200";
+        if (type === "مناقشة") return "bg-emerald-100 text-emerald-900 border-emerald-200";
+        return "bg-slate-100 text-slate-800 border-slate-200";
+      };
+
+      appEl.innerHTML = `
+        <div class="space-y-5">
+          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
+            <h1 class="text-xl sm:text-2xl font-black text-white">📝 التكليفات المطلوبة (شيت • بحث • مناقشة)</h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              اختر شعبتك عشان تشوف الشيتات والأبحاث والمناقشات المطلوبة منك ومواعيد تسليمها بدون لخبطة بين الشُعب.
+            </p>
+          </div>
+
+          <!-- اختيار الشعبة (أهم فلتر) -->
+          <div class="surface-card rounded-2xl p-4 space-y-4">
+            <div>
+              <div class="text-xs font-black text-[#071124] mb-2">1. اختر الشعبة:</div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                ${BRANCHES_LIST.map(
+                  (b) => `
+                    <button
+                      type="button"
+                      data-asg-branch="${b.id}"
+                      class="px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black border-2 transition cursor-pointer ${
+                        state.assignBranch === b.id
+                          ? "border-[#071124] bg-[#071124] text-white"
+                          : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50"
+                      }"
+                    >
+                      ${b.name}
+                    </button>
+                  `
+                ).join("")}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+              <div>
+                <div class="text-xs font-black text-slate-600 mb-2">2. نوع التكليف:</div>
+                <div class="flex flex-wrap gap-1.5">
+                  ${TASK_TYPES_LIST.map(
+                    (t) => `
+                      <button
+                        type="button"
+                        data-asg-type="${t.id}"
+                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                          state.assignType === t.id
+                            ? "bg-amber-400 text-slate-950 border-amber-500"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }"
+                      >
+                        ${t.name}
+                      </button>
+                    `
+                  ).join("")}
+                </div>
+              </div>
+
+              <div>
+                <div class="text-xs font-black text-slate-600 mb-2">3. المادة:</div>
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                  ${SUBJECTS_LIST.map(
+                    (s) => `
+                      <button
+                        type="button"
+                        data-asg-subj="${s.id}"
+                        class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                          state.assignSubject === s.id
+                            ? "bg-[#071124] text-white border-[#071124]"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }"
+                      >
+                        ${s.name}
+                      </button>
+                    `
+                  ).join("")}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- قائمة التكليفات -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${
+              list.length === 0
+                ? `<div class="md:col-span-2 surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                    لا توجد تكليفات مطابقة للاختيارات الحالية.
+                  </div>`
+                : list
+                    .map(
+                      (item) => `
+                        <div class="surface-card rounded-2xl p-5 flex flex-col justify-between gap-3">
+                          <div class="space-y-2.5">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                              <span class="px-3 py-1 rounded-full text-xs font-black border ${typeBadgeColor(item.type)}">
+                                ${escapeHtml(item.type)}
+                              </span>
+                              <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-950 border border-indigo-200">
+                                ${item.branch === "all" ? "كل الشُعب" : `شعبة: ${escapeHtml(getBranchName(item.branch))}`}
+                              </span>
+                            </div>
+
+                            <div class="text-base font-black text-[#071124]">
+                              ${escapeHtml(getSubjectName(item.subjectId))}
+                              ${item.doctor ? `<span class="text-xs font-bold text-slate-500">(${escapeHtml(item.doctor)})</span>` : ""}
+                            </div>
+
+                            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                              ${escapeHtml(item.task)}
+                            </p>
+                          </div>
+
+                          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold">
+                            <span class="text-slate-500">موعد التسليم / المناقشة:</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950">
+                              ${escapeHtml(item.deadline || "يُحدد في المحاضرة")}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    )
+                    .join("")
+            }
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll("[data-asg-branch]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.assignBranch = btn.getAttribute("data-asg-branch");
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-asg-type]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.assignType = btn.getAttribute("data-asg-type");
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-asg-subj]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.assignSubject = btn.getAttribute("data-asg-subj");
+          render();
+        });
+      });
+    }
+
+    // =====================================================================
+    // 7. قسم الأسئلة الأسبوعية (تجميع كل أسبوع كاختبار تفاعلي)
+    // =====================================================================
+    function renderWeeklySetup() {
+      const packs = DATA.weeklyQuizzes || [];
+      if (!state.selectedWeeklyId && packs.length > 0) {
+        state.selectedWeeklyId = packs[0].id;
+      }
+
+      const selectedPack = packs.find((p) => p.id === state.selectedWeeklyId);
+
+      appEl.innerHTML = `
+        <div class="space-y-5">
+          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
+            <h1 class="text-xl sm:text-2xl font-black text-white">🎯 الأسئلة الأسبوعية (تجميع أول بأول)</h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              اختبارات قصيرة وشاملة على كل اللي اتاخد خلال الأسبوع عشان نراجع أول بأول ونثبت المعلومة.
+            </p>
+          </div>
+
+          ${
+            packs.length === 0
+              ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                  سيتم إضافة تجميعة أسئلة الأسبوع الأول قريباً بعد بدء المحاضرات.
+                </div>`
+              : `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  ${packs
+                    .map((pack) => {
+                      const isSel = pack.id === state.selectedWeeklyId;
+                      return `
+                        <button
+                          type="button"
+                          data-pick-weekly="${pack.id}"
+                          class="surface-card rounded-2xl p-4 sm:p-5 text-right border-2 transition cursor-pointer ${
+                            isSel
+                              ? "border-[#071124] ring-2 ring-[#071124]/15"
+                              : "border-slate-200 hover:border-slate-300"
+                          }"
+                        >
+                          <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-200">
+                              ${pack.questions.length} سؤال
+                            </span>
+                            ${isSel ? `<span class="text-xs font-black text-[#071124]">✓ مختارة</span>` : ""}
+                          </div>
+                          <div class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(pack.title)}</div>
+                          <div class="text-xs text-slate-600 mt-1">${escapeHtml(pack.subtitle || "")}</div>
+                        </button>
+                      `;
+                    })
+                    .join("")}
+                </div>
+
+                ${
+                  selectedPack
+                    ? `
+                      <div class="surface-card rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="space-y-1">
+                          <div class="text-sm font-black text-[#071124]">طريقة التصحيح:</div>
+                          <div class="flex flex-wrap gap-2 pt-1">
+                            <button
+                              type="button"
+                              data-wgrd="instant"
+                              class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
+                                state.gradingMode === "instant"
+                                  ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
+                                  : "border-slate-200 text-slate-700"
+                              }"
+                            >
+                              تصحيح فوري أثناء الحل
+                            </button>
+                            <button
+                              type="button"
+                              data-wgrd="end"
+                              class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
+                                state.gradingMode === "end"
+                                  ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
+                                  : "border-slate-200 text-slate-700"
+                              }"
+                            >
+                              تصحيح نهائي بعد التسليم
+                            </button>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          id="start-weekly-btn"
+                          class="px-7 py-3.5 rounded-2xl text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow transition cursor-pointer shrink-0"
+                        >
+                          ابدأ اختبار الأسبوع ←
+                        </button>
+                      </div>
+                    `
+                    : ""
+                }
+              `
+          }
+        </div>
+      `;
+
+      document.querySelectorAll("[data-pick-weekly]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.selectedWeeklyId = btn.getAttribute("data-pick-weekly");
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-wgrd]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.gradingMode = btn.getAttribute("data-wgrd");
+          render();
+        });
+      });
+
+      const startWBtn = document.getElementById("start-weekly-btn");
+      if (startWBtn && selectedPack) {
+        startWBtn.addEventListener("click", () => {
+          if (!selectedPack.questions || !selectedPack.questions.length) {
+            showToast("لا توجد أسئلة في هذه المجموعة بعد.");
+            return;
+          }
+          state.quizSource = "weekly";
+          state.questions = [...selectedPack.questions];
+          state.currentIdx = 0;
+          state.answers = {};
+          state.locked = {};
+          state.quizView = "quiz";
+          render();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+    }
+
+    // =====================================================================
+    // 8. قسم أسئلة الميدتيرم (المواد الحالية + العد التنازلي + المواد المنتهية)
+    // =====================================================================
+    function getCountdownParts() {
+      const target = new Date(DATA.midtermDate || "2026-11-24T00:00:00");
+      const diff = target.getTime() - Date.now();
+      if (diff <= 0) {
+        return { expired: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+      const totalSeconds = Math.floor(diff / 1000);
+      return {
+        expired: false,
+        days: Math.floor(totalSeconds / 86400),
+        hours: Math.floor((totalSeconds % 86400) / 3600),
+        minutes: Math.floor((totalSeconds % 3600) / 60),
+        seconds: totalSeconds % 60
+      };
+    }
+
+    function pad2(n) {
+      return String(n).padStart(2, "0");
+    }
+
+    function updateCountdownDOM() {
+      const c = getCountdownParts();
+      const dEl = document.getElementById("cd-days");
+      const hEl = document.getElementById("cd-hours");
+      const mEl = document.getElementById("cd-minutes");
+      const sEl = document.getElementById("cd-seconds");
+      const statusEl = document.getElementById("cd-status");
+
+      if (dEl) dEl.textContent = pad2(c.days);
+      if (hEl) hEl.textContent = pad2(c.hours);
+      if (mEl) mEl.textContent = pad2(c.minutes);
+      if (sEl) sEl.textContent = pad2(c.seconds);
+      if (statusEl) {
+        statusEl.textContent = c.expired
+          ? "بدأ موعد امتحان الميدتيرم (24 / 11 / 2026)"
+          : "موعد الميدتيرم: 24 / 11 / 2026";
+      }
+    }
+
+    function renderMidtermSetup() {
+      const courses = DATA.midtermCourses || {};
+      const subj = courses[state.midtermSubjectId] || courses.politics || Object.values(courses)[0];
+      if (!subj) {
+        appEl.innerHTML = `<div class="surface-card rounded-2xl p-6 text-center font-bold">تأكد من وجود ملف data.js في نفس المجلد.</div>`;
+        return;
+      }
+
+      const tfCount = subj.questions.filter((q) => q.section === "tf").length;
+      const mcqCount = subj.questions.filter((q) => q.section === "mcq").length;
+      const c = getCountdownParts();
+
+      appEl.innerHTML = `
+        <div class="space-y-6">
+          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+              <div class="space-y-1">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                  <span>العد التنازلي للميدتيرم</span>
+                  <span>•</span>
+                  <span id="cd-status">${c.expired ? "بدأ موعد امتحان الميدتيرم (24 / 11 / 2026)" : "موعد الميدتيرم: 24 / 11 / 2026"}</span>
+                </div>
+                <h1 class="text-xl sm:text-3xl font-black text-white pt-1">أسئلة الميدتيرم</h1>
+                <p class="text-xs sm:text-sm text-slate-300">
+                  اختر المادة المتاحة وابدأ المراجعة أو راجع المواد المنتهية.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-4 gap-2.5 text-center shrink-0" dir="ltr">
+                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
+                  <div id="cd-days" class="text-lg sm:text-2xl font-black text-amber-300">${pad2(c.days)}</div>
+                  <div class="text-[11px] font-bold text-slate-300">يوم</div>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
+                  <div id="cd-hours" class="text-lg sm:text-2xl font-black text-white">${pad2(c.hours)}</div>
+                  <div class="text-[11px] font-bold text-slate-300">ساعة</div>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
+                  <div id="cd-minutes" class="text-lg sm:text-2xl font-black text-white">${pad2(c.minutes)}</div>
+                  <div class="text-[11px] font-bold text-slate-300">دقيقة</div>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
+                  <div id="cd-seconds" class="text-lg sm:text-2xl font-black text-amber-300">${pad2(c.seconds)}</div>
+                  <div class="text-[11px] font-bold text-slate-300">ثانية</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="text-sm sm:text-base font-black text-[#071124]">المواد الحالية</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              ${Object.values(courses)
+                .map((item) => {
+                  const selected = item.id === state.midtermSubjectId;
+                  return `
+                    <button
+                      type="button"
+                      data-pick-subj="${item.id}"
+                      class="surface-card rounded-2xl p-4 sm:p-5 text-right border-2 transition cursor-pointer ${
+                        selected
+                          ? "border-[#071124] ring-2 ring-[#071124]/15"
+                          : "border-slate-200 hover:border-slate-300"
+                      }"
+                    >
+                      <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${item.badgeCls || "bg-indigo-100 text-indigo-900 border-indigo-200"}">
+                          ${item.questions.length} سؤال
+                        </span>
+                        ${selected ? `<span class="text-xs font-black text-[#071124]">✓ مختارة</span>` : ""}
+                      </div>
+                      <div class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(item.title)}</div>
+                      <div class="text-xs text-slate-600 mt-1 leading-relaxed">${escapeHtml(item.subtitle)}</div>
+                    </button>
+                  `;
+                })
+                .join("")}
+            </div>
+          </div>
+
+          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div class="space-y-2">
+                <div class="text-sm font-black text-[#071124]">نوع الأسئلة</div>
+                ${[
+                  { id: "all", label: `الكل (${subj.questions.length})` },
+                  { id: "tf", label: `صح وخطأ (${tfCount})` },
+                  { id: "mcq", label: `اختيار من متعدد (${mcqCount})` }
+                ]
+                  .map(
+                    (opt) => `
+                      <button
+                        type="button"
+                        data-sec="${opt.id}"
+                        class="w-full text-right px-4 py-2.5 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
+                          state.sectionFilter === opt.id
+                            ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
+                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                        }"
+                      >
+                        ${opt.label}
+                      </button>
+                    `
+                  )
+                  .join("")}
+              </div>
+
+              <div class="space-y-2">
+                <div class="text-sm font-black text-[#071124]">نطاق التدريب</div>
+                ${[
+                  { id: "all", label: "كل أسئلة النطاق المختار" },
+                  { id: "sample5", label: "تدريب سريع (5 أسئلة)" }
+                ]
+                  .map(
+                    (opt) => `
+                      <button
+                        type="button"
+                        data-cnt="${opt.id}"
+                        class="w-full text-right px-4 py-2.5 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
+                          state.questionCountMode === opt.id
+                            ? "border-amber-500 bg-amber-50/70 text-amber-950"
+                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                        }"
+                      >
+                        ${opt.label}
+                      </button>
+                    `
+                  )
+                  .join("")}
+              </div>
+
+              <div class="space-y-2">
+                <div class="text-sm font-black text-[#071124]">طريقة التصحيح</div>
+                ${[
+                  { id: "end", label: "تصحيح نهائي بعد التسليم" },
+                  { id: "instant", label: "تصحيح فوري أثناء الحل" }
+                ]
+                  .map(
+                    (opt) => `
+                      <button
+                        type="button"
+                        data-grd="${opt.id}"
+                        class="w-full text-right px-4 py-2.5 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
+                          state.gradingMode === opt.id
+                            ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
+                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                        }"
+                      >
+                        ${opt.label}
+                      </button>
+                    `
+                  )
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+              <button
+                type="button"
+                id="start-midterm-btn"
+                class="w-full sm:w-auto px-7 py-3.5 rounded-2xl text-sm sm:text-base font-black ${subj.accentBtn || "bg-indigo-700 hover:bg-indigo-800 text-white"} shadow-md transition cursor-pointer"
+              >
+                ابدأ المراجعة الآن ←
+              </button>
+            </div>
+          </div>
+
+          <div class="surface-card rounded-3xl p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="text-sm sm:text-base font-black text-[#071124]">المواد المنتهية</h2>
+              <span class="text-xs font-bold text-slate-500">تم انتهاء امتحاناتها</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              ${(DATA.finishedMidtermCourses || [])
+                .map(
+                  (course) => `
+                    <div class="rounded-2xl p-4 bg-slate-50 border border-slate-200/90 flex flex-col justify-between gap-3 opacity-90">
+                      <div class="text-sm sm:text-base font-black text-slate-800">${escapeHtml(course.title)}</div>
+                      <div>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-black bg-slate-200/90 text-slate-700 border border-slate-300">
+                          ${escapeHtml(course.statusLabel)}
+                        </span>
+                      </div>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll("[data-pick-subj]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.midtermSubjectId = btn.getAttribute("data-pick-subj");
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-sec]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.sectionFilter = btn.getAttribute("data-sec");
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-cnt]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.questionCountMode = btn.getAttribute("data-cnt");
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-grd]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.gradingMode = btn.getAttribute("data-grd");
+          render();
+        });
+      });
+
+      document.getElementById("start-midterm-btn").addEventListener("click", () => {
+        let pool =
+          state.sectionFilter === "all"
+            ? [...subj.questions]
+            : subj.questions.filter((q) => q.section === state.sectionFilter);
+
+        if (state.questionCountMode === "sample5" && pool.length > 5) {
+          pool = pool.slice(0, 5);
+        }
+
+        if (!pool.length) {
+          showToast("لا توجد أسئلة متاحة لهذا الاختيار.");
+          return;
+        }
+
+        state.quizSource = "midterm";
+        state.questions = pool;
+        state.currentIdx = 0;
+        state.answers = {};
+        state.locked = {};
+        state.quizView = "quiz";
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+
+    // =====================================================================
+    // 9. محرك حل الأسئلة والنتيجة المشترك (للميدتيرم والأسئلة الأسبوعية)
+    // =====================================================================
+    function getActiveQuizTitle() {
+      if (state.quizSource === "weekly") {
+        const pack = (DATA.weeklyQuizzes || []).find((p) => p.id === state.selectedWeeklyId);
+        return pack ? pack.title : "الأسئلة الأسبوعية";
+      }
+      const subj = (DATA.midtermCourses || {})[state.midtermSubjectId];
+      return subj ? subj.title : "أسئلة الميدتيرم";
+    }
+
+    function calculateResult() {
+      let correct = 0;
+      let wrong = 0;
+      let unanswered = 0;
+      const wrongIds = [];
+
+      state.questions.forEach((q) => {
+        const ans = state.answers[q.id];
+        if (ans === undefined) {
+          unanswered += 1;
+          wrongIds.push(q.id);
+        } else if (ans === q.correctAnswer) {
+          correct += 1;
+        } else {
+          wrong += 1;
+          wrongIds.push(q.id);
+        }
+      });
+
+      const total = state.questions.length;
+      const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+      let grade = "يحتاج مراجعة";
+      let gradeCls = "bg-rose-100 text-rose-800 border-rose-200";
+      if (pct >= 85) {
+        grade = "امتياز";
+        gradeCls = "bg-emerald-100 text-emerald-800 border-emerald-200";
+      } else if (pct >= 75) {
+        grade = "جيد جداً";
+        gradeCls = "bg-indigo-100 text-indigo-800 border-indigo-200";
+      } else if (pct >= 60) {
+        grade = "جيد";
+        gradeCls = "bg-amber-100 text-amber-900 border-amber-200";
+      } else if (pct >= 50) {
+        grade = "مقبول";
+        gradeCls = "bg-orange-100 text-orange-900 border-orange-200";
+      }
+
+      return { correct, wrong, unanswered, total, pct, grade, gradeCls, wrongIds };
+    }
+
+    function renderQuizEngine() {
+      const q = state.questions[state.currentIdx];
+      if (!q) {
+        state.quizView = "setup";
+        render();
+        return;
+      }
+
+      const quizTitle = getActiveQuizTitle();
+      const total = state.questions.length;
+      const chosen = state.answers[q.id];
+      const isInstant = state.gradingMode === "instant";
+      const isLocked = isInstant && Boolean(state.locked[q.id]);
+      const secLabel = q.section === "tf" ? "صح أم خطأ" : "اختيار من متعدد";
+      const letters = ["أ", "ب", "ج", "د"];
+
+      appEl.innerHTML = `
+        <div class="space-y-5">
+          <div class="surface-card rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                id="exit-quiz-btn"
+                class="px-3 py-1 rounded-xl text-xs font-black bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer"
+              >
+                ✕ إنهاء
+              </button>
+              <span class="px-3 py-1 rounded-xl text-xs font-black bg-[#071124] text-white">
+                سؤال ${state.currentIdx + 1} / ${total}
+              </span>
+              <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
+                ${escapeHtml(quizTitle)} • ${secLabel}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              id="toggle-instant-live"
+              class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                isInstant
+                  ? "bg-emerald-50 text-emerald-900 border-emerald-300"
+                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+              }"
+            >
+              ${isInstant ? "التصحيح الفوري: مفعل" : "تفعيل التصحيح الفوري"}
+            </button>
+          </div>
+
+          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-6">
+            <h2 class="text-base sm:text-xl font-black text-[#071124] leading-relaxed">
+              ${escapeHtml(q.question)}
+            </h2>
+
+            <div class="space-y-2.5">
+              ${q.options
+                .map((opt, idx) => {
+                  const isSelected = chosen === opt;
+                  let cls = "border-slate-200 bg-white hover:bg-slate-50 text-slate-800";
+                  let badge = "";
+
+                  if (isInstant && chosen !== undefined) {
+                    if (opt === q.correctAnswer) {
+                      cls = "border-emerald-500 bg-emerald-50 text-emerald-950";
+                      badge = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-600 text-white">صحيح ✓</span>`;
+                    } else if (isSelected) {
+                      cls = "border-rose-500 bg-rose-50 text-rose-950";
+                      badge = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white">اختيارك ✕</span>`;
+                    } else {
+                      cls = "border-slate-200 bg-slate-50 text-slate-400";
+                    }
+                  } else if (isSelected) {
+                    cls = "border-[#071124] bg-[#071124]/5 text-[#071124]";
+                    badge = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-[#071124] text-white">محدد</span>`;
+                  }
+
+                  const prefix = q.section === "mcq" ? `${letters[idx] || idx + 1} - ` : "";
+
+                  return `
+                    <button
+                      type="button"
+                      ${isLocked ? "disabled" : ""}
+                      data-choose="${encodeURIComponent(opt)}"
+                      class="choice-btn w-full text-right p-3.5 sm:p-4 rounded-2xl border-2 flex items-center justify-between gap-3 ${
+                        isLocked ? "cursor-not-allowed" : "cursor-pointer"
+                      } ${cls}"
+                    >
+                      <span class="font-bold text-sm sm:text-base">${prefix}${escapeHtml(opt)}</span>
+                      ${badge}
+                    </button>
+                  `;
+                })
+                .join("")}
+            </div>
+
+            ${
+              isInstant && chosen !== undefined
+                ? `
+                  <div class="p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed ${
+                    chosen === q.correctAnswer
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-950"
+                      : "bg-amber-50 border-amber-200 text-amber-950"
+                  }">
+                    <div class="font-black mb-1">
+                      ${chosen === q.correctAnswer ? "إجابة صحيحة ✓" : `الإجابة الصحيحة هي: (${escapeHtml(q.correctAnswer)})`}
+                    </div>
+                    <div>${escapeHtml(q.explanation || "")}</div>
+                  </div>
+                `
+                : ""
+            }
+
+            <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+              <button
+                type="button"
+                id="prev-q-btn"
+                ${state.currentIdx === 0 ? "disabled" : ""}
+                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+              >
+                → السابق
+              </button>
+
+              <div class="flex items-center gap-2">
+                ${
+                  state.currentIdx < total - 1
+                    ? `<button type="button" id="next-q-btn" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-[#071124] hover:bg-[#102447] text-white transition cursor-pointer">
+                        التالي ←
+                      </button>`
+                    : ""
+                }
+                <button
+                  type="button"
+                  id="submit-exam-btn"
+                  class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white transition cursor-pointer"
+                >
+                  تسليم وعرض النتيجة ✓
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="surface-card rounded-2xl p-4">
+            <div class="text-xs font-extrabold text-slate-600 mb-2.5">الانتقال السريع بين الأسئلة</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${state.questions
+                .map((item, idx) => {
+                  const isCur = idx === state.currentIdx;
+                  const isAns = state.answers[item.id] !== undefined;
+                  let cls = "bg-slate-100 text-slate-700 hover:bg-slate-200";
+                  if (isCur) cls = "bg-[#071124] text-white ring-2 ring-amber-400";
+                  else if (isAns) cls = "bg-emerald-100 text-emerald-900 border border-emerald-300";
+
+                  return `
+                    <button
+                      type="button"
+                      data-jump-idx="${idx}"
+                      class="w-8 h-8 rounded-xl text-xs font-extrabold transition cursor-pointer ${cls}"
+                    >
+                      ${idx + 1}
+                    </button>
+                  `;
+                })
+                .join("")}
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("exit-quiz-btn").addEventListener("click", () => {
+        state.quizView = "setup";
+        render();
+      });
+
+      document.querySelectorAll("[data-choose]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (isInstant && state.locked[q.id]) {
+            showToast("تم تثبيت إجابة هذا السؤال في وضع التصحيح الفوري.");
+            return;
+          }
+          state.answers[q.id] = decodeURIComponent(btn.getAttribute("data-choose"));
+          if (state.gradingMode === "instant") {
+            state.locked[q.id] = true;
+          }
+          updateProgressBar();
+          renderQuizEngine();
+        });
+      });
+
+      document.getElementById("toggle-instant-live").addEventListener("click", () => {
+        state.gradingMode = state.gradingMode === "instant" ? "end" : "instant";
+        if (state.gradingMode === "instant") {
+          Object.keys(state.answers).forEach((qid) => {
+            state.locked[qid] = true;
+          });
+        }
+        renderQuizEngine();
+      });
+
+      const prevBtn = document.getElementById("prev-q-btn");
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          if (state.currentIdx > 0) {
+            state.currentIdx -= 1;
+            renderQuizEngine();
+          }
+        });
+      }
+
+      const nextBtn = document.getElementById("next-q-btn");
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          if (state.currentIdx < total - 1) {
+            state.currentIdx += 1;
+            renderQuizEngine();
+          }
+        });
+      }
+
+      document.getElementById("submit-exam-btn").addEventListener("click", () => {
+        const res = calculateResult();
+        if (res.unanswered > 0) {
+          showToast(`تم التصحيح (يوجد ${res.unanswered} سؤال بدون إجابة).`);
+        }
+        state.resultFilter = "all";
+        state.quizView = "result";
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      document.querySelectorAll("[data-jump-idx]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.getAttribute("data-jump-idx"));
+          if (!Number.isNaN(idx)) {
+            state.currentIdx = idx;
+            renderQuizEngine();
+          }
+        });
+      });
+    }
+
+    function renderResultEngine() {
+      const quizTitle = getActiveQuizTitle();
+      const res = calculateResult();
+
+      const filtered = state.questions.filter((q) => {
+        const ok = state.answers[q.id] === q.correctAnswer;
+        if (state.resultFilter === "wrong") return !ok;
+        if (state.resultFilter === "correct") return ok;
+        return true;
+      });
+
+      appEl.innerHTML = `
+        <div class="space-y-6">
+          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <span class="px-3 py-1 rounded-full text-xs font-black border ${res.gradeCls}">
+                  التقدير: ${res.grade}
+                </span>
+                <h2 class="text-xl sm:text-2xl font-black text-[#071124] mt-2">
+                  نتيجة: ${escapeHtml(quizTitle)}
+                </h2>
+              </div>
+
+              <div class="bg-[#071124] text-white rounded-2xl px-5 py-3 text-center">
+                <div class="text-2xl sm:text-3xl font-black text-amber-400">${res.pct}%</div>
+                <div class="text-xs font-bold text-slate-200">${res.correct} من ${res.total}</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-center">
+              <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
+                <div class="text-lg sm:text-xl font-black text-emerald-800">${res.correct}</div>
+                <div class="text-xs font-bold text-emerald-700">صحيحة</div>
+              </div>
+              <div class="p-3 rounded-2xl bg-rose-50 border border-rose-200">
+                <div class="text-lg sm:text-xl font-black text-rose-800">${res.wrong}</div>
+                <div class="text-xs font-bold text-rose-700">خاطئة</div>
+              </div>
+              <div class="p-3 rounded-2xl bg-slate-100 border border-slate-200">
+                <div class="text-lg sm:text-xl font-black text-slate-800">${res.unanswered}</div>
+                <div class="text-xs font-bold text-slate-600">غير مجابة</div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
+              ${
+                res.wrongIds.length > 0
+                  ? `<button type="button" id="retry-wrong-btn" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-rose-100 hover:bg-rose-200 text-rose-900 border border-rose-200 transition cursor-pointer">
+                      مراجعة الأخطاء فقط (${res.wrongIds.length})
+                    </button>`
+                  : ""
+              }
+              <button type="button" id="back-to-setup-btn" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black bg-[#071124] hover:bg-[#102447] text-white transition cursor-pointer">
+                العودة لقائمة الاختبارات
+              </button>
+            </div>
+          </div>
+
+          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-base sm:text-lg font-black text-[#071124]">مراجعة الإجابات والتعليل</h3>
+              <div class="flex items-center gap-1.5">
+                ${[
+                  { id: "all", label: `الكل (${state.questions.length})` },
+                  { id: "wrong", label: `الأخطاء (${res.wrongIds.length})` },
+                  { id: "correct", label: `الصحيحة (${res.correct})` }
+                ]
+                  .map(
+                    (tab) => `
+                      <button
+                        type="button"
+                        data-rfilter="${tab.id}"
+                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                          state.resultFilter === tab.id
+                            ? "bg-[#071124] text-white border-[#071124]"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }"
+                      >
+                        ${tab.label}
+                      </button>
+                    `
+                  )
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="space-y-3.5">
+              ${
+                filtered.length === 0
+                  ? `<div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center text-xs sm:text-sm font-extrabold text-emerald-900">
+                      لا توجد أسئلة في هذا التصنيف.
+                    </div>`
+                  : filtered
+                      .map((q) => {
+                        const userAns = state.answers[q.id];
+                        const ok = userAns === q.correctAnswer;
+                        return `
+                          <div class="p-4 rounded-2xl border-2 space-y-2.5 ${
+                            ok ? "border-emerald-200 bg-emerald-50/30" : "border-rose-200 bg-rose-50/30"
+                          }">
+                            <div class="flex items-center justify-between gap-2">
+                              <span class="text-xs font-black text-slate-700">
+                                ${q.section === "tf" ? "صح وخطأ" : "اختيار من متعدد"} • سؤال (${q.number})
+                              </span>
+                              <span class="px-2.5 py-0.5 rounded-full text-xs font-black ${
+                                ok ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"
+                              }">
+                                ${ok ? "صحيحة ✓" : userAns === undefined ? "غير مجاب" : "خاطئة ✕"}
+                              </span>
+                            </div>
+
+                            <div class="text-sm sm:text-base font-extrabold text-[#071124] leading-relaxed">
+                              ${escapeHtml(q.question)}
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+                              <div class="p-2.5 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-600">إجابتك: </span>
+                                <span class="font-black ${ok ? "text-emerald-700" : "text-rose-700"}">
+                                  ${userAns !== undefined ? escapeHtml(userAns) : "لم يتم الاختيار"}
+                                </span>
+                              </div>
+                              <div class="p-2.5 rounded-xl bg-white border border-emerald-200">
+                                <span class="font-bold text-slate-600">الإجابة الصحيحة: </span>
+                                <span class="font-black text-emerald-800">${escapeHtml(q.correctAnswer)}</span>
+                              </div>
+                            </div>
+
+                            ${
+                              q.explanation
+                                ? `<div class="p-3 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                                    <span class="font-black text-[#071124]">التعليل: </span>
+                                    ${escapeHtml(q.explanation)}
+                                  </div>`
+                                : ""
+                            }
+                          </div>
+                        `;
+                      })
+                      .join("")
+              }
+            </div>
+          </div>
+        </div>
+      `;
+
+      const retryWrongBtn = document.getElementById("retry-wrong-btn");
+      if (retryWrongBtn) {
+        retryWrongBtn.addEventListener("click", () => {
+          const wrongSet = new Set(res.wrongIds);
+          state.questions = state.questions.filter((q) => wrongSet.has(q.id));
+          state.currentIdx = 0;
+          state.answers = {};
+          state.locked = {};
+          state.quizView = "quiz";
+          render();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
+      document.getElementById("back-to-setup-btn").addEventListener("click", () => {
+        state.quizView = "setup";
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      document.querySelectorAll("[data-rfilter]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.resultFilter = btn.getAttribute("data-rfilter");
+          renderResultEngine();
+        });
+      });
+    }
+
+    // =====================================================================
+    // 10. دالة العرض الرئيسية
+    // =====================================================================
+    function render() {
+      updateNavTabs();
+      updateProgressBar();
+
+      if (state.activeTab === "alerts") {
+        renderAlertsTab();
+      } else if (state.activeTab === "lectures") {
+        renderLecturesTab();
+      } else if (state.activeTab === "assignments") {
+        renderAssignmentsTab();
+      } else if (state.activeTab === "weekly") {
+        if (state.quizView === "quiz") renderQuizEngine();
+        else if (state.quizView === "result") renderResultEngine();
+        else renderWeeklySetup();
+      } else if (state.activeTab === "midterm") {
+        if (state.quizView === "quiz") renderQuizEngine();
+        else if (state.quizView === "result") renderResultEngine();
+        else {
+          renderMidtermSetup();
+          updateCountdownDOM();
+        }
+      }
+    }
+
+    document.querySelectorAll(".nav-tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.activeTab = btn.getAttribute("data-tab");
+        state.quizView = "setup";
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+
+    document.getElementById("toast-close").addEventListener("click", () => {
+      document.getElementById("toast-box").classList.add("hidden");
+    });
+
+    render();
+    setInterval(updateCountdownDOM, 1000);
+  </script>
+</body>
+</html>
