@@ -952,10 +952,12 @@
     }
 
     // =====================================================================
-    // 10. قسم أسئلة الميدتيرم (المواد الحالية + العد التنازلي + المواد المنتهية)
+    // 10. إغلاق صفحة أسئلة الميدتيرم والعد التنازلي للفاينل (2 / 1 / 2027)
     // =====================================================================
+    const FINALS_DATE_ISO = "2027-01-02T00:00:00";
+
     function getCountdownParts() {
-      const target = new Date(FALLBACK_DATA.midtermDate || "2026-11-24T00:00:00");
+      const target = new Date(FINALS_DATE_ISO);
       const diff = target.getTime() - Date.now();
       if (diff <= 0) {
         return { expired: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -988,36 +990,31 @@
       if (sEl) sEl.textContent = pad2(c.seconds);
       if (statusEl) {
         statusEl.textContent = c.expired
-          ? "انتهى العد التنازلي للميدتيرم (24 / 11 / 2026)"
-          : "موعد الميدتيرم: 24 / 11 / 2026";
+          ? "بدأ موعد امتحانات الفاينل (2 / 1 / 2027)"
+          : "الموعد المقرر للفاينل من المعهد: 2 / 1 / 2027";
       }
     }
 
     function renderMidtermSetup() {
-      const courses = FALLBACK_DATA.midtermCourses || {};
-      const subj = courses[state.midtermSubjectId] || courses.politics || Object.values(courses)[0];
-      if (!subj) {
-        appEl.innerHTML = `<div class="surface-card rounded-2xl p-6 text-center font-bold">تأكد من وجود ملف data.js في نفس المجلد لأسئلة الميدتيرم.</div>`;
-        return;
-      }
-
-      const tfCount = subj.questions.filter((q) => q.section === "tf").length;
-      const mcqCount = subj.questions.filter((q) => q.section === "mcq").length;
       const c = getCountdownParts();
 
       appEl.innerHTML = `
         <div class="space-y-6">
-          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-              <div class="space-y-1">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-amber-400/15 text-amber-300 border border-amber-400/30">
-                  <span>العد التنازلي للميدتيرم</span>
+          <div class="surface-card rounded-3xl p-6 sm:p-8 bg-[#071124] text-white border-[#071124]">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div class="space-y-2 max-w-2xl">
+                <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                  <span>✓ تم الانتهاء من امتحانات الميدتيرم</span>
                   <span>•</span>
-                  <span id="cd-status">${c.expired ? "انتهى العد التنازلي للميدتيرم (24 / 11 / 2026)" : "موعد الميدتيرم: 24 / 11 / 2026"}</span>
+                  <span id="cd-status">${c.expired ? "بدأ موعد امتحانات الفاينل (2 / 1 / 2027)" : "الموعد المقرر للفاينل من المعهد: 2 / 1 / 2027"}</span>
                 </div>
-                <h1 class="text-xl sm:text-3xl font-black text-white pt-1">أسئلة الميدتيرم</h1>
-                <p class="text-xs sm:text-sm text-slate-300">
-                  بنك أسئلة الميدتيرم للمراجعة والتدريب.
+
+                <h1 class="text-2xl sm:text-3xl font-black text-white pt-1">
+                  تم الانتهاء من امتحانات الميدتيرم
+                </h1>
+
+                <p class="text-sm sm:text-base text-slate-200 leading-relaxed font-semibold">
+                  صفحة أسئلة الميدتيرم أُغلقت بعد انتهاء المرحلة. بنكمّل مع بعض أول بأول في المحاضرات والتكليفات والأسئلة الأسبوعية، ونشوفكم في <span class="text-amber-300 font-black">مراجعات الفاينل إن شاء الله</span>.
                 </p>
               </div>
 
@@ -1042,204 +1039,60 @@
             </div>
           </div>
 
-          <div class="space-y-3">
-            <div class="text-sm sm:text-base font-black text-[#071124]">بنوك أسئلة الميدتيرم</div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              ${Object.values(courses)
-                .map((item) => {
-                  const selected = item.id === state.midtermSubjectId;
-                  return `
-                    <button
-                      type="button"
-                      data-pick-subj="${item.id}"
-                      class="surface-card rounded-2xl p-4 sm:p-5 text-right border-2 transition cursor-pointer ${
-                        selected
-                          ? "border-[#071124] ring-2 ring-[#071124]/15"
-                          : "border-slate-200 hover:border-slate-300"
-                      }"
-                    >
-                      <div class="flex items-center justify-between gap-2 mb-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${item.badgeCls || "bg-indigo-100 text-indigo-900 border-indigo-200"}">
-                          ${item.questions.length} سؤال
-                        </span>
-                        ${selected ? `<span class="text-xs font-black text-[#071124]">✓ مختارة</span>` : ""}
-                      </div>
-                      <div class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(item.title)}</div>
-                      <div class="text-xs text-slate-600 mt-1 leading-relaxed">${escapeHtml(item.subtitle)}</div>
-                    </button>
-                  `;
-                })
-                .join("")}
-            </div>
-          </div>
-
-          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div class="space-y-2">
-                <div class="text-sm font-black text-[#071124]">نوع الأسئلة</div>
-                ${[
-                  { id: "all", label: `الكل (${subj.questions.length})` },
-                  { id: "tf", label: `صح وخطأ (${tfCount})` },
-                  { id: "mcq", label: `اختيار من متعدد (${mcqCount})` }
-                ]
-                  .map(
-                    (opt) => `
-                      <button
-                        type="button"
-                        data-sec="${opt.id}"
-                        class="w-full text-right px-4 py-2.5 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
-                          state.sectionFilter === opt.id
-                            ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                        }"
-                      >
-                        ${opt.label}
-                      </button>
-                    `
-                  )
-                  .join("")}
+          <div class="surface-card rounded-3xl p-6 sm:p-7 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-[#071124]">استعدادنا للفترة القادمة حتى الفاينل</h2>
+                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+                  الموعد المقرر للفاينل حتى الآن من المعهد هو <strong class="text-[#071124]">2 / 1 / 2027</strong>.
+                </p>
               </div>
-
-              <div class="space-y-2">
-                <div class="text-sm font-black text-[#071124]">نطاق التدريب</div>
-                ${[
-                  { id: "all", label: "كل أسئلة النطاق المختار" },
-                  { id: "sample5", label: "تدريب سريع (5 أسئلة)" }
-                ]
-                  .map(
-                    (opt) => `
-                      <button
-                        type="button"
-                        data-cnt="${opt.id}"
-                        class="w-full text-right px-4 py-2.5 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
-                          state.questionCountMode === opt.id
-                            ? "border-amber-500 bg-amber-50/70 text-amber-950"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                        }"
-                      >
-                        ${opt.label}
-                      </button>
-                    `
-                  )
-                  .join("")}
-              </div>
-
-              <div class="space-y-2">
-                <div class="text-sm font-black text-[#071124]">طريقة التصحيح</div>
-                ${[
-                  { id: "end", label: "تصحيح نهائي بعد التسليم" },
-                  { id: "instant", label: "تصحيح فوري أثناء الحل" }
-                ]
-                  .map(
-                    (opt) => `
-                      <button
-                        type="button"
-                        data-grd="${opt.id}"
-                        class="w-full text-right px-4 py-2.5 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
-                          state.gradingMode === opt.id
-                            ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                        }"
-                      >
-                        ${opt.label}
-                      </button>
-                    `
-                  )
-                  .join("")}
-              </div>
+              <span class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-amber-100 text-amber-950 border border-amber-200 w-fit">
+                نشوفكم في مراجعات الفاينل إن شاء الله
+              </span>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <button
                 type="button"
-                id="start-midterm-btn"
-                class="w-full sm:w-auto px-7 py-3.5 rounded-2xl text-sm sm:text-base font-black ${subj.accentBtn || "bg-indigo-700 hover:bg-indigo-800 text-white"} shadow-md transition cursor-pointer"
+                data-go-tab="lectures"
+                class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
               >
-                ابدأ المراجعة الآن ←
+                <div class="text-sm font-black text-[#071124]">📚 ملخصات المحاضرات</div>
+                <div class="text-xs text-slate-600">تابع ملخصات المواد أول بأول مع توضيح إدارة الأعمال للشُعب.</div>
               </button>
-            </div>
-          </div>
 
-          <div class="surface-card rounded-3xl p-5 sm:p-6 space-y-4">
-            <div class="flex items-center justify-between gap-2">
-              <h2 class="text-sm sm:text-base font-black text-[#071124]">المواد المنتهية</h2>
-              <span class="text-xs font-bold text-slate-500">تم انتهاء امتحاناتها</span>
-            </div>
+              <button
+                type="button"
+                data-go-tab="assignments"
+                class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
+              >
+                <div class="text-sm font-black text-[#071124]">📝 التكليفات حسب الشُعب</div>
+                <div class="text-xs text-slate-600">راجع الشيتات والأبحاث والمناقشات المطلوبة لشعبتك ومواعيدها.</div>
+              </button>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              ${(FALLBACK_DATA.finishedMidtermCourses || [])
-                .map(
-                  (course) => `
-                    <div class="rounded-2xl p-4 bg-slate-50 border border-slate-200/90 flex flex-col justify-between gap-3 opacity-90">
-                      <div class="text-sm sm:text-base font-black text-slate-800">${escapeHtml(course.title)}</div>
-                      <div>
-                        <span class="inline-block px-3 py-1 rounded-full text-xs font-black bg-slate-200/90 text-slate-700 border border-slate-300">
-                          ${escapeHtml(course.statusLabel)}
-                        </span>
-                      </div>
-                    </div>
-                  `
-                )
-                .join("")}
+              <button
+                type="button"
+                data-go-tab="weekly"
+                class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
+              >
+                <div class="text-sm font-black text-[#071124]">🎯 الأسئلة الأسبوعية</div>
+                <div class="text-xs text-slate-600">حل تجميعات الأسئلة الأسبوعية عشان تبقى جاهز لمراجعات الفاينل.</div>
+              </button>
             </div>
           </div>
         </div>
       `;
 
-      document.querySelectorAll("[data-pick-subj]").forEach((btn) => {
+      document.querySelectorAll("[data-go-tab]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          state.midtermSubjectId = btn.getAttribute("data-pick-subj");
+          state.activeTab = btn.getAttribute("data-go-tab");
+          state.quizView = "setup";
           render();
+          window.scrollTo({ top: 0, behavior: "smooth" });
         });
-      });
-
-      document.querySelectorAll("[data-sec]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          state.sectionFilter = btn.getAttribute("data-sec");
-          render();
-        });
-      });
-
-      document.querySelectorAll("[data-cnt]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          state.questionCountMode = btn.getAttribute("data-cnt");
-          render();
-        });
-      });
-
-      document.querySelectorAll("[data-grd]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          state.gradingMode = btn.getAttribute("data-grd");
-          render();
-        });
-      });
-
-      document.getElementById("start-midterm-btn").addEventListener("click", () => {
-        let pool =
-          state.sectionFilter === "all"
-            ? [...subj.questions]
-            : subj.questions.filter((q) => q.section === state.sectionFilter);
-
-        if (state.questionCountMode === "sample5" && pool.length > 5) {
-          pool = pool.slice(0, 5);
-        }
-
-        if (!pool.length) {
-          showToast("لا توجد أسئلة متاحة لهذا الاختيار.");
-          return;
-        }
-
-        state.quizSource = "midterm";
-        state.questions = pool;
-        state.currentIdx = 0;
-        state.answers = {};
-        state.locked = {};
-        state.quizView = "quiz";
-        render();
-        window.scrollTo({ top: 0, behavior: "smooth" });
       });
     }
-
     // =====================================================================
     // 11. محرك حل الأسئلة والنتيجة المشترك (للميدتيرم والأسئلة الأسبوعية)
     // =====================================================================
