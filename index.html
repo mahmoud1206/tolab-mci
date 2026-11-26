@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="طلاب MCI" />
   <title>طلاب MCI — الفرقة الأولى • دفعة 2026</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
@@ -52,7 +53,7 @@
 <body class="antialiased selection:bg-amber-200 selection:text-slate-950">
 
   <!-- =====================================================================
-       البار العلوي + زر قناة الواتساب + شريط التنقل بين الأقسام
+       البار العلوي + زر قناة الواتساب + زر التحديث + شريط التنقل
   ====================================================================== -->
   <header class="sticky top-0 z-40 bg-[#071124] text-white border-b border-white/10 shadow-md">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 min-h-16 py-2.5 flex flex-wrap items-center justify-between gap-3">
@@ -71,6 +72,16 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          id="refresh-db-btn"
+          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 hover:bg-white/20 text-slate-100 border border-white/15 transition cursor-pointer"
+          title="تحديث البيانات من السيرفر"
+        >
+          <span>🔄</span>
+          <span class="hidden sm:inline">تحديث</span>
+        </button>
+
         <a
           href="https://whatsapp.com/channel/0029VbDoAyV1t90Xere28X0B"
           target="_blank"
@@ -104,7 +115,7 @@
       </div>
     </nav>
 
-    <!-- شريط تقدم الاختبار (يظهر أثناء حل أي اختبار) -->
+    <!-- شريط تقدم الاختبار -->
     <div id="quiz-progress-strip" class="hidden bg-[#102447] border-t border-white/10">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 py-2">
         <div class="flex items-center justify-between text-xs font-bold text-slate-200 mb-1.5">
@@ -147,12 +158,19 @@
     </div>
   </footer>
 
-  <!-- استدعاء ملف البيانات المنفصل -->
+  <!-- ملف البيانات المحلي (يحتوي على بنك أسئلة الميدتيرم كمرجع سريع) -->
   <script src="data.js"></script>
 
   <script>
     // =====================================================================
-    // 1. الثوابت الأساسية للمعهد والمواد والشُعب
+    // 1. إعدادات الاتصال بـ Supabase
+    // =====================================================================
+    const SUPABASE_URL = "https://rspibcrdzccmtypewkul.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_EAqDKk3U8UpZ2VCO9itiwQ_qpYHigKF";
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // =====================================================================
+    // 2. الثوابت الأساسية للمعهد والمواد والشُعب
     // =====================================================================
     const SUBJECTS_LIST = [
       { id: "all", name: "كل المواد" },
@@ -178,8 +196,7 @@
       { id: "مناقشة", name: "مناقشة" }
     ];
 
-    // ضمان وجود البيانات حتى لو تأخر تحميل data.js لأي سبب
-    const DATA = window.MCI_DATA || {
+    const FALLBACK_DATA = window.MCI_DATA || {
       midtermDate: "2026-11-24T00:00:00",
       alerts: [],
       lectures: [],
@@ -189,8 +206,18 @@
       finishedMidtermCourses: []
     };
 
+    // مخزن البيانات الحية من Supabase
+    const liveStore = {
+      loading: true,
+      error: null,
+      alerts: [],
+      lectures: [],
+      assignments: [],
+      weeklyQuizzes: []
+    };
+
     // =====================================================================
-    // 2. حالة التطبيق العامة
+    // 3. حالة التطبيق العامة
     // =====================================================================
     const state = {
       activeTab: "alerts", // 'alerts' | 'lectures' | 'assignments' | 'weekly' | 'midterm'
@@ -259,7 +286,75 @@
     }
 
     // =====================================================================
-    // 3. تحديث شريط التنقل وشريط التقدم
+    // 4. جلب البيانات من جداول Supabase
+    // =====================================================================
+    async function loadFromSupabase(notify = false) {
+      liveStore.loading = true;
+      liveStore.error = null;
+      render();
+
+      try {
+        const [alertsRes, lecturesRes, assignmentsRes, weeklyRes] = await Promise.all([
+          sb.from("alerts").select("*").order("created_at", { ascending: false }),
+          sb.from("lectures").select("*").order("created_at", { ascending: false }),
+          sb.from("assignments").select("*").order("created_at", { ascending: false }),
+          sb.from("weekly_questions").select("*").order("created_at", { ascending: true })
+        ]);
+
+        if (alertsRes.error) throw alertsRes.error;
+        if (lecturesRes.error) throw lecturesRes.error;
+        if (assignmentsRes.error) throw assignmentsRes.error;
+        if (weeklyRes.error) throw weeklyRes.error;
+
+        liveStore.alerts = alertsRes.data || [];
+        liveStore.lectures = lecturesRes.data || [];
+        liveStore.assignments = assignmentsRes.data || [];
+
+        // تجميع الأسئلة الأسبوعية حسب week_label
+        const groupedMap = new Map();
+        (weeklyRes.data || []).forEach((row) => {
+          const label = row.week_label || "أسئلة أسبوعية";
+          if (!groupedMap.has(label)) {
+            groupedMap.set(label, {
+              id: label,
+              title: label,
+              subtitle: "تجميعة أسئلة المراجعة الأسبوعية",
+              questions: []
+            });
+          }
+          const pack = groupedMap.get(label);
+          const opts = Array.isArray(row.options) ? row.options : ["صح", "خطأ"];
+          pack.questions.push({
+            id: `wq-${row.id}`,
+            section: row.section || "mcq",
+            number: pack.questions.length + 1,
+            subjectId: row.subject_id || "all",
+            question: `[${getSubjectName(row.subject_id)}] ${row.question_text}`,
+            options: opts,
+            correctAnswer: row.correct_answer,
+            explanation: row.explanation || ""
+          });
+        });
+
+        liveStore.weeklyQuizzes = Array.from(groupedMap.values()).reverse();
+        if (liveStore.weeklyQuizzes.length > 0 && !groupedMap.has(state.selectedWeeklyId)) {
+          state.selectedWeeklyId = liveStore.weeklyQuizzes[0].id;
+        }
+
+        liveStore.loading = false;
+        if (notify) showToast("تم تحديث البيانات من السيرفر بنجاح ✓");
+      } catch (err) {
+        console.error("Supabase error:", err);
+        liveStore.loading = false;
+        liveStore.error = err.message || "تعذر الاتصال بقاعدة البيانات حالياً.";
+        if (notify) showToast("حدث خطأ أثناء التحديث، تأكد من اتصال الإنترنت.");
+      }
+
+      render();
+    }
+
+    // =====================================================================
+    // 5. تحديث شريط التنقل وشريط التقدم
     // =====================================================================
     function updateNavTabs() {
       document.querySelectorAll(".nav-tab").forEach((btn) => {
@@ -291,12 +386,21 @@
       progressBar.style.width = `${pct}%`;
     }
 
+    function renderLoadingBox(text = "جاري تحميل أحدث البيانات من السيرفر...") {
+      return `
+        <div class="surface-card rounded-2xl p-8 text-center space-y-2">
+          <div class="inline-block w-7 h-7 border-4 border-[#071124] border-t-amber-400 rounded-full animate-spin"></div>
+          <p class="text-xs sm:text-sm font-extrabold text-slate-700">${escapeHtml(text)}</p>
+        </div>
+      `;
+    }
+
     // =====================================================================
-    // 4. قسم التنبيهات العاجلة والملاحظات
+    // 6. قسم التنبيهات العاجلة والملاحظات
     // =====================================================================
     function renderAlertsTab() {
-      const list = (DATA.alerts || []).filter((item) => {
-        if (state.alertSubject !== "all" && item.subjectId !== state.alertSubject && item.subjectId !== "all") {
+      const list = liveStore.alerts.filter((item) => {
+        if (state.alertSubject !== "all" && item.subject_id !== state.alertSubject && item.subject_id !== "all") {
           return false;
         }
         return true;
@@ -311,7 +415,6 @@
             </p>
           </div>
 
-          <!-- فلتر المواد -->
           <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
             ${SUBJECTS_LIST.map(
               (s) => `
@@ -330,48 +433,53 @@
             ).join("")}
           </div>
 
-          <!-- قائمة التنبيهات -->
-          <div class="space-y-3.5">
-            ${
-              list.length === 0
-                ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                    لا توجد تنبيهات مسجلة لهذا التصنيف حالياً.
-                  </div>`
-                : list
-                    .map(
-                      (item) => `
-                        <div class="surface-card rounded-2xl p-4 sm:p-5 border-r-4 ${
-                          item.important ? "border-r-rose-600 bg-rose-50/20" : "border-r-amber-400"
-                        } space-y-2">
-                          <div class="flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex flex-wrap items-center gap-2">
-                              ${
-                                item.important
-                                  ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white">تنبيه هام</span>`
-                                  : `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900">ملاحظة</span>`
-                              }
-                              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-800">
-                                ${escapeHtml(getSubjectName(item.subjectId || "all"))}
-                              </span>
-                              ${
-                                item.branch && item.branch !== "all"
-                                  ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
-                                      شعبة: ${escapeHtml(getBranchName(item.branch))}
-                                    </span>`
-                                  : ""
-                              }
-                            </div>
-                            <span class="text-xs font-bold text-slate-500">${escapeHtml(item.date || "")}</span>
-                          </div>
+          ${
+            liveStore.loading
+              ? renderLoadingBox("جاري تحميل التنبيهات...")
+              : `
+                <div class="space-y-3.5">
+                  ${
+                    list.length === 0
+                      ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                          لا توجد تنبيهات مضافة لهذا التصنيف حالياً.
+                        </div>`
+                      : list
+                          .map(
+                            (item) => `
+                              <div class="surface-card rounded-2xl p-4 sm:p-5 border-r-4 ${
+                                item.is_important ? "border-r-rose-600 bg-rose-50/20" : "border-r-amber-400"
+                              } space-y-2">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                  <div class="flex flex-wrap items-center gap-2">
+                                    ${
+                                      item.is_important
+                                        ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white">تنبيه هام</span>`
+                                        : `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900">ملاحظة</span>`
+                                    }
+                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-800">
+                                      ${escapeHtml(getSubjectName(item.subject_id || "all"))}
+                                    </span>
+                                    ${
+                                      item.branch && item.branch !== "all"
+                                        ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
+                                            شعبة: ${escapeHtml(getBranchName(item.branch))}
+                                          </span>`
+                                        : ""
+                                    }
+                                  </div>
+                                  <span class="text-xs font-bold text-slate-500">${escapeHtml(item.display_date || "")}</span>
+                                </div>
 
-                          <h2 class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(item.title)}</h2>
-                          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(item.details)}</p>
-                        </div>
-                      `
-                    )
-                    .join("")
-            }
-          </div>
+                                <h2 class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(item.title)}</h2>
+                                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(item.details)}</p>
+                              </div>
+                            `
+                          )
+                          .join("")
+                  }
+                </div>
+              `
+          }
         </div>
       `;
 
@@ -384,11 +492,11 @@
     }
 
     // =====================================================================
-    // 5. قسم ملخصات المحاضرات
+    // 7. قسم ملخصات المحاضرات
     // =====================================================================
     function renderLecturesTab() {
-      const list = (DATA.lectures || []).filter((lec) => {
-        if (state.lectureSubject !== "all" && lec.subjectId !== state.lectureSubject) return false;
+      const list = liveStore.lectures.filter((lec) => {
+        if (state.lectureSubject !== "all" && lec.subject_id !== state.lectureSubject) return false;
         if (state.lectureBranch !== "all" && lec.branch && lec.branch !== "all" && lec.branch !== state.lectureBranch) {
           return false;
         }
@@ -404,7 +512,6 @@
             </p>
           </div>
 
-          <!-- فلاتر المادة والشعبة -->
           <div class="surface-card rounded-2xl p-4 space-y-3">
             <div>
               <div class="text-xs font-black text-slate-600 mb-2">تصفية حسب المادة:</div>
@@ -449,68 +556,73 @@
             </div>
           </div>
 
-          <!-- بطاقات المحاضرات -->
-          <div class="space-y-4">
-            ${
-              list.length === 0
-                ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                    لا توجد ملخصات مضافة لهذا التصنيف بعد.
-                  </div>`
-                : list
-                    .map(
-                      (lec) => `
-                        <article class="surface-card rounded-2xl p-5 space-y-3">
-                          <div class="flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex flex-wrap items-center gap-2">
-                              <span class="px-3 py-1 rounded-xl text-xs font-black bg-[#071124] text-white">
-                                ${escapeHtml(getSubjectName(lec.subjectId))}
-                              </span>
-                              <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-950 border border-amber-200">
-                                ${escapeHtml(lec.lectureTitle)}
-                              </span>
-                              ${
-                                lec.doctor
-                                  ? `<span class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 text-slate-800">
-                                      ${escapeHtml(lec.doctor)}
-                                    </span>`
-                                  : ""
-                              }
-                              ${
-                                lec.branch && lec.branch !== "all"
-                                  ? `<span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
-                                      ${escapeHtml(getBranchName(lec.branch))}
-                                    </span>`
-                                  : ""
-                              }
-                            </div>
-                            <span class="text-xs font-bold text-slate-500">${escapeHtml(lec.date || "")}</span>
-                          </div>
+          ${
+            liveStore.loading
+              ? renderLoadingBox("جاري تحميل ملخصات المحاضرات...")
+              : `
+                <div class="space-y-4">
+                  ${
+                    list.length === 0
+                      ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                          لا توجد ملخصات مضافة لهذا التصنيف بعد.
+                        </div>`
+                      : list
+                          .map(
+                            (lec) => `
+                              <article class="surface-card rounded-2xl p-5 space-y-3">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                  <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-3 py-1 rounded-xl text-xs font-black bg-[#071124] text-white">
+                                      ${escapeHtml(getSubjectName(lec.subject_id))}
+                                    </span>
+                                    <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-950 border border-amber-200">
+                                      ${escapeHtml(lec.lecture_title)}
+                                    </span>
+                                    ${
+                                      lec.doctor
+                                        ? `<span class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 text-slate-800">
+                                            ${escapeHtml(lec.doctor)}
+                                          </span>`
+                                        : ""
+                                    }
+                                    ${
+                                      lec.branch && lec.branch !== "all"
+                                        ? `<span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
+                                            ${escapeHtml(getBranchName(lec.branch))}
+                                          </span>`
+                                        : ""
+                                    }
+                                  </div>
+                                  <span class="text-xs font-bold text-slate-500">${escapeHtml(lec.display_date || "")}</span>
+                                </div>
 
-                          <div class="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line bg-slate-50/80 p-4 rounded-xl border border-slate-200/80">
-                            ${escapeHtml(lec.summary)}
-                          </div>
+                                <div class="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line bg-slate-50/80 p-4 rounded-xl border border-slate-200/80">
+                                  ${escapeHtml(lec.summary)}
+                                </div>
 
-                          ${
-                            lec.pdfLink
-                              ? `<div>
-                                  <a
-                                    href="${escapeHtml(lec.pdfLink)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black bg-indigo-700 hover:bg-indigo-800 text-white transition"
-                                  >
-                                    <span>فتح ملف الملخص / PDF</span>
-                                    <span>↗</span>
-                                  </a>
-                                </div>`
-                              : ""
-                          }
-                        </article>
-                      `
-                    )
-                    .join("")
-            }
-          </div>
+                                ${
+                                  lec.pdf_link
+                                    ? `<div>
+                                        <a
+                                          href="${escapeHtml(lec.pdf_link)}"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black bg-indigo-700 hover:bg-indigo-800 text-white transition"
+                                        >
+                                          <span>فتح ملف الملخص / PDF</span>
+                                          <span>↗</span>
+                                        </a>
+                                      </div>`
+                                    : ""
+                                }
+                              </article>
+                            `
+                          )
+                          .join("")
+                  }
+                </div>
+              `
+          }
         </div>
       `;
 
@@ -530,17 +642,17 @@
     }
 
     // =====================================================================
-    // 6. قسم التكليفات (شيت - بحث - مناقشة) مقسّم حسب الشُعب
+    // 8. قسم التكليفات (شيت - بحث - مناقشة) مقسّم حسب الشُعب
     // =====================================================================
     function renderAssignmentsTab() {
-      const list = (DATA.assignments || []).filter((item) => {
+      const list = liveStore.assignments.filter((item) => {
         if (state.assignBranch !== "all" && item.branch !== "all" && item.branch !== state.assignBranch) {
           return false;
         }
-        if (state.assignSubject !== "all" && item.subjectId !== state.assignSubject) {
+        if (state.assignSubject !== "all" && item.subject_id !== state.assignSubject) {
           return false;
         }
-        if (state.assignType !== "all" && item.type !== state.assignType) {
+        if (state.assignType !== "all" && item.task_type !== state.assignType) {
           return false;
         }
         return true;
@@ -562,7 +674,6 @@
             </p>
           </div>
 
-          <!-- اختيار الشعبة (أهم فلتر) -->
           <div class="surface-card rounded-2xl p-4 space-y-4">
             <div>
               <div class="text-xs font-black text-[#071124] mb-2">1. اختر الشعبة:</div>
@@ -630,49 +741,54 @@
             </div>
           </div>
 
-          <!-- قائمة التكليفات -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            ${
-              list.length === 0
-                ? `<div class="md:col-span-2 surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                    لا توجد تكليفات مطابقة للاختيارات الحالية.
-                  </div>`
-                : list
-                    .map(
-                      (item) => `
-                        <div class="surface-card rounded-2xl p-5 flex flex-col justify-between gap-3">
-                          <div class="space-y-2.5">
-                            <div class="flex flex-wrap items-center justify-between gap-2">
-                              <span class="px-3 py-1 rounded-full text-xs font-black border ${typeBadgeColor(item.type)}">
-                                ${escapeHtml(item.type)}
-                              </span>
-                              <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-950 border border-indigo-200">
-                                ${item.branch === "all" ? "كل الشُعب" : `شعبة: ${escapeHtml(getBranchName(item.branch))}`}
-                              </span>
-                            </div>
+          ${
+            liveStore.loading
+              ? renderLoadingBox("جاري تحميل التكليفات والشيتات...")
+              : `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  ${
+                    list.length === 0
+                      ? `<div class="md:col-span-2 surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                          لا توجد تكليفات مطابقة للاختيارات الحالية.
+                        </div>`
+                      : list
+                          .map(
+                            (item) => `
+                              <div class="surface-card rounded-2xl p-5 flex flex-col justify-between gap-3">
+                                <div class="space-y-2.5">
+                                  <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-black border ${typeBadgeColor(item.task_type)}">
+                                      ${escapeHtml(item.task_type)}
+                                    </span>
+                                    <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-950 border border-indigo-200">
+                                      ${item.branch === "all" ? "كل الشُعب" : `شعبة: ${escapeHtml(getBranchName(item.branch))}`}
+                                    </span>
+                                  </div>
 
-                            <div class="text-base font-black text-[#071124]">
-                              ${escapeHtml(getSubjectName(item.subjectId))}
-                              ${item.doctor ? `<span class="text-xs font-bold text-slate-500">(${escapeHtml(item.doctor)})</span>` : ""}
-                            </div>
+                                  <div class="text-base font-black text-[#071124]">
+                                    ${escapeHtml(getSubjectName(item.subject_id))}
+                                    ${item.doctor ? `<span class="text-xs font-bold text-slate-500">(${escapeHtml(item.doctor)})</span>` : ""}
+                                  </div>
 
-                            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                              ${escapeHtml(item.task)}
-                            </p>
-                          </div>
+                                  <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                                    ${escapeHtml(item.task_details)}
+                                  </p>
+                                </div>
 
-                          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold">
-                            <span class="text-slate-500">موعد التسليم / المناقشة:</span>
-                            <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950">
-                              ${escapeHtml(item.deadline || "يُحدد في المحاضرة")}
-                            </span>
-                          </div>
-                        </div>
-                      `
-                    )
-                    .join("")
-            }
-          </div>
+                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold">
+                                  <span class="text-slate-500">موعد التسليم / المناقشة:</span>
+                                  <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950">
+                                    ${escapeHtml(item.deadline || "يُحدد في المحاضرة")}
+                                  </span>
+                                </div>
+                              </div>
+                            `
+                          )
+                          .join("")
+                  }
+                </div>
+              `
+          }
         </div>
       `;
 
@@ -699,10 +815,10 @@
     }
 
     // =====================================================================
-    // 7. قسم الأسئلة الأسبوعية (تجميع كل أسبوع كاختبار تفاعلي)
+    // 9. قسم الأسئلة الأسبوعية (تجميع كل أسبوع كاختبار تفاعلي من Supabase)
     // =====================================================================
     function renderWeeklySetup() {
-      const packs = DATA.weeklyQuizzes || [];
+      const packs = liveStore.weeklyQuizzes;
       if (!state.selectedWeeklyId && packs.length > 0) {
         state.selectedWeeklyId = packs[0].id;
       }
@@ -719,83 +835,85 @@
           </div>
 
           ${
-            packs.length === 0
-              ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                  سيتم إضافة تجميعة أسئلة الأسبوع الأول قريباً بعد بدء المحاضرات.
-                </div>`
-              : `
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  ${packs
-                    .map((pack) => {
-                      const isSel = pack.id === state.selectedWeeklyId;
-                      return `
-                        <button
-                          type="button"
-                          data-pick-weekly="${pack.id}"
-                          class="surface-card rounded-2xl p-4 sm:p-5 text-right border-2 transition cursor-pointer ${
-                            isSel
-                              ? "border-[#071124] ring-2 ring-[#071124]/15"
-                              : "border-slate-200 hover:border-slate-300"
-                          }"
-                        >
-                          <div class="flex items-center justify-between gap-2 mb-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-200">
-                              ${pack.questions.length} سؤال
-                            </span>
-                            ${isSel ? `<span class="text-xs font-black text-[#071124]">✓ مختارة</span>` : ""}
-                          </div>
-                          <div class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(pack.title)}</div>
-                          <div class="text-xs text-slate-600 mt-1">${escapeHtml(pack.subtitle || "")}</div>
-                        </button>
-                      `;
-                    })
-                    .join("")}
-                </div>
+            liveStore.loading
+              ? renderLoadingBox("جاري تحميل الأسئلة الأسبوعية...")
+              : packs.length === 0
+                ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
+                    لا توجد أسئلة أسبوعية مضافة بعد. سيتم نزولها أول بأول بعد المحاضرات.
+                  </div>`
+                : `
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    ${packs
+                      .map((pack) => {
+                        const isSel = pack.id === state.selectedWeeklyId;
+                        return `
+                          <button
+                            type="button"
+                            data-pick-weekly="${escapeHtml(pack.id)}"
+                            class="surface-card rounded-2xl p-4 sm:p-5 text-right border-2 transition cursor-pointer ${
+                              isSel
+                                ? "border-[#071124] ring-2 ring-[#071124]/15"
+                                : "border-slate-200 hover:border-slate-300"
+                            }"
+                          >
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-200">
+                                ${pack.questions.length} سؤال
+                              </span>
+                              ${isSel ? `<span class="text-xs font-black text-[#071124]">✓ مختارة</span>` : ""}
+                            </div>
+                            <div class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(pack.title)}</div>
+                            <div class="text-xs text-slate-600 mt-1">${escapeHtml(pack.subtitle || "")}</div>
+                          </button>
+                        `;
+                      })
+                      .join("")}
+                  </div>
 
-                ${
-                  selectedPack
-                    ? `
-                      <div class="surface-card rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div class="space-y-1">
-                          <div class="text-sm font-black text-[#071124]">طريقة التصحيح:</div>
-                          <div class="flex flex-wrap gap-2 pt-1">
-                            <button
-                              type="button"
-                              data-wgrd="instant"
-                              class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
-                                state.gradingMode === "instant"
-                                  ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
-                                  : "border-slate-200 text-slate-700"
-                              }"
-                            >
-                              تصحيح فوري أثناء الحل
-                            </button>
-                            <button
-                              type="button"
-                              data-wgrd="end"
-                              class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
-                                state.gradingMode === "end"
-                                  ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
-                                  : "border-slate-200 text-slate-700"
-                              }"
-                            >
-                              تصحيح نهائي بعد التسليم
-                            </button>
+                  ${
+                    selectedPack
+                      ? `
+                        <div class="surface-card rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                          <div class="space-y-1">
+                            <div class="text-sm font-black text-[#071124]">طريقة التصحيح:</div>
+                            <div class="flex flex-wrap gap-2 pt-1">
+                              <button
+                                type="button"
+                                data-wgrd="instant"
+                                class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
+                                  state.gradingMode === "instant"
+                                    ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
+                                    : "border-slate-200 text-slate-700"
+                                }"
+                              >
+                                تصحيح فوري أثناء الحل
+                              </button>
+                              <button
+                                type="button"
+                                data-wgrd="end"
+                                class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
+                                  state.gradingMode === "end"
+                                    ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
+                                    : "border-slate-200 text-slate-700"
+                                }"
+                              >
+                                تصحيح نهائي بعد التسليم
+                              </button>
+                            </div>
                           </div>
+
+                          <button
+                            type="button"
+                            id="start-weekly-btn"
+                            class="px-7 py-3.5 rounded-2xl text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow transition cursor-pointer shrink-0"
+                          >
+                            ابدأ اختبار الأسبوع ←
+                          </button>
                         </div>
-
-                        <button
-                          type="button"
-                          id="start-weekly-btn"
-                          class="px-7 py-3.5 rounded-2xl text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow transition cursor-pointer shrink-0"
-                        >
-                          ابدأ اختبار الأسبوع ←
-                        </button>
-                      </div>
-                    `
-                    : ""
-                }
-              `
+                      `
+                      : ""
+                  }
+                `
           }
         </div>
       `;
@@ -834,10 +952,10 @@
     }
 
     // =====================================================================
-    // 8. قسم أسئلة الميدتيرم (المواد الحالية + العد التنازلي + المواد المنتهية)
+    // 10. قسم أسئلة الميدتيرم (المواد الحالية + العد التنازلي + المواد المنتهية)
     // =====================================================================
     function getCountdownParts() {
-      const target = new Date(DATA.midtermDate || "2026-11-24T00:00:00");
+      const target = new Date(FALLBACK_DATA.midtermDate || "2026-11-24T00:00:00");
       const diff = target.getTime() - Date.now();
       if (diff <= 0) {
         return { expired: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -870,16 +988,16 @@
       if (sEl) sEl.textContent = pad2(c.seconds);
       if (statusEl) {
         statusEl.textContent = c.expired
-          ? "بدأ موعد امتحان الميدتيرم (24 / 11 / 2026)"
+          ? "انتهى العد التنازلي للميدتيرم (24 / 11 / 2026)"
           : "موعد الميدتيرم: 24 / 11 / 2026";
       }
     }
 
     function renderMidtermSetup() {
-      const courses = DATA.midtermCourses || {};
+      const courses = FALLBACK_DATA.midtermCourses || {};
       const subj = courses[state.midtermSubjectId] || courses.politics || Object.values(courses)[0];
       if (!subj) {
-        appEl.innerHTML = `<div class="surface-card rounded-2xl p-6 text-center font-bold">تأكد من وجود ملف data.js في نفس المجلد.</div>`;
+        appEl.innerHTML = `<div class="surface-card rounded-2xl p-6 text-center font-bold">تأكد من وجود ملف data.js في نفس المجلد لأسئلة الميدتيرم.</div>`;
         return;
       }
 
@@ -895,11 +1013,11 @@
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-amber-400/15 text-amber-300 border border-amber-400/30">
                   <span>العد التنازلي للميدتيرم</span>
                   <span>•</span>
-                  <span id="cd-status">${c.expired ? "بدأ موعد امتحان الميدتيرم (24 / 11 / 2026)" : "موعد الميدتيرم: 24 / 11 / 2026"}</span>
+                  <span id="cd-status">${c.expired ? "انتهى العد التنازلي للميدتيرم (24 / 11 / 2026)" : "موعد الميدتيرم: 24 / 11 / 2026"}</span>
                 </div>
                 <h1 class="text-xl sm:text-3xl font-black text-white pt-1">أسئلة الميدتيرم</h1>
                 <p class="text-xs sm:text-sm text-slate-300">
-                  اختر المادة المتاحة وابدأ المراجعة أو راجع المواد المنتهية.
+                  بنك أسئلة الميدتيرم للمراجعة والتدريب.
                 </p>
               </div>
 
@@ -925,7 +1043,7 @@
           </div>
 
           <div class="space-y-3">
-            <div class="text-sm sm:text-base font-black text-[#071124]">المواد الحالية</div>
+            <div class="text-sm sm:text-base font-black text-[#071124]">بنوك أسئلة الميدتيرم</div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               ${Object.values(courses)
                 .map((item) => {
@@ -1049,7 +1167,7 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              ${(DATA.finishedMidtermCourses || [])
+              ${(FALLBACK_DATA.finishedMidtermCourses || [])
                 .map(
                   (course) => `
                     <div class="rounded-2xl p-4 bg-slate-50 border border-slate-200/90 flex flex-col justify-between gap-3 opacity-90">
@@ -1123,14 +1241,14 @@
     }
 
     // =====================================================================
-    // 9. محرك حل الأسئلة والنتيجة المشترك (للميدتيرم والأسئلة الأسبوعية)
+    // 11. محرك حل الأسئلة والنتيجة المشترك (للميدتيرم والأسئلة الأسبوعية)
     // =====================================================================
     function getActiveQuizTitle() {
       if (state.quizSource === "weekly") {
-        const pack = (DATA.weeklyQuizzes || []).find((p) => p.id === state.selectedWeeklyId);
+        const pack = liveStore.weeklyQuizzes.find((p) => p.id === state.selectedWeeklyId);
         return pack ? pack.title : "الأسئلة الأسبوعية";
       }
-      const subj = (DATA.midtermCourses || {})[state.midtermSubjectId];
+      const subj = (FALLBACK_DATA.midtermCourses || {})[state.midtermSubjectId];
       return subj ? subj.title : "أسئلة الميدتيرم";
     }
 
@@ -1590,7 +1708,7 @@
     }
 
     // =====================================================================
-    // 10. دالة العرض الرئيسية
+    // 12. دالة العرض الرئيسية
     // =====================================================================
     function render() {
       updateNavTabs();
@@ -1625,11 +1743,16 @@
       });
     });
 
+    document.getElementById("refresh-db-btn").addEventListener("click", () => {
+      loadFromSupabase(true);
+    });
+
     document.getElementById("toast-close").addEventListener("click", () => {
       document.getElementById("toast-box").classList.add("hidden");
     });
 
-    render();
+    // بدء التشغيل وجلب البيانات من Supabase
+    loadFromSupabase(false);
     setInterval(updateCountdownDOM, 1000);
   </script>
 </body>
