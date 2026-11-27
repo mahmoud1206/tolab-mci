@@ -20,21 +20,21 @@
     }
 
     body {
-      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      background: #f4f6f9;
       color: #0f172a;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    .surface-card {
+    .clean-card {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 8px 24px -12px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e5e9f0;
+      box-shadow: 0 4px 18px -10px rgba(15, 23, 42, 0.07);
     }
 
     .choice-btn {
-      transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+      transition: transform 0.14s ease, border-color 0.14s ease, background-color 0.14s ease;
     }
 
     .choice-btn:active:not(:disabled) {
@@ -53,76 +53,75 @@
 <body class="antialiased selection:bg-amber-200 selection:text-slate-950">
 
   <!-- =====================================================================
-       البار العلوي + زر قناة الواتساب + زر التحديث + شريط التنقل
+       الهيدر العلوي المنظم + شريط التنقل
   ====================================================================== -->
-  <header class="sticky top-0 z-40 bg-[#071124] text-white border-b border-white/10 shadow-md">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 min-h-16 py-2.5 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 font-black text-sm flex items-center justify-center shadow shrink-0">
+  <header class="sticky top-0 z-40 bg-[#071124] text-white border-b border-white/10">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">
           MCI
         </div>
-        <div>
-          <span class="block text-sm sm:text-lg font-black text-white">
+        <div class="min-w-0">
+          <div class="text-sm sm:text-base font-black text-white truncate">
             طلاب MCI • دفعة 2026
-          </span>
-          <span class="block text-[11px] text-slate-300 font-semibold">
-            MCI Academy بالتجمع الأول • بكالوريوس تجارة (الفرقة الأولى)
-          </span>
+          </div>
+          <div class="text-[11px] text-slate-300 font-semibold truncate">
+            الفرقة الأولى • MCI Academy بالتجمع الأول
+          </div>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="flex items-center gap-1.5 shrink-0">
         <button
           type="button"
           id="refresh-db-btn"
-          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 hover:bg-white/20 text-slate-100 border border-white/15 transition cursor-pointer"
-          title="تحديث البيانات من السيرفر"
+          class="px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 hover:bg-white/20 text-slate-100 transition cursor-pointer"
+          title="تحديث البيانات"
         >
-          <span>🔄</span>
-          <span class="hidden sm:inline">تحديث</span>
+          🔄
         </button>
 
         <a
           href="https://whatsapp.com/channel/0029VbDoAyV1t90Xere28X0B"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/30 shadow-sm transition"
+          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition"
         >
-          <span>انضمام لقناة الواتس</span>
+          <span>قناة الواتس</span>
           <span aria-hidden="true">↗</span>
         </a>
       </div>
     </div>
 
-    <!-- شريط التنقل الرئيسي بين أقسام المنصة -->
-    <nav class="bg-[#0c1b36] border-t border-white/10">
-      <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar" id="main-nav">
-        <button type="button" data-tab="alerts" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+    <!-- شريط التنقل الرئيسي -->
+    <nav class="bg-[#0b1931] border-t border-white/10">
+      <div class="max-w-4xl mx-auto px-3 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="main-nav">
+        <button type="button" data-tab="alerts" class="nav-tab shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
           🔔 التنبيهات
         </button>
-        <button type="button" data-tab="lectures" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
-          📚 ملخصات المحاضرات
+        <button type="button" data-tab="lectures" class="nav-tab shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          📚 المحاضرات
         </button>
-        <button type="button" data-tab="assignments" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
-          📝 التكليفات (شيت / بحث / مناقشة)
+        <button type="button" data-tab="assignments" class="nav-tab shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          📝 التكليفات
         </button>
-        <button type="button" data-tab="weekly" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
-          🎯 الأسئلة الأسبوعية
+        <button type="button" data-tab="weekly" class="nav-tab shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+          🎯 أسئلة الأسبوع
         </button>
-        <button type="button" data-tab="midterm" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
+        <button type="button" data-tab="midterm" class="nav-tab shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
           🎓 الفاينل والميدتيرم
         </button>
       </div>
     </nav>
 
-    <!-- شريط تقدم الاختبار -->
+    <!-- شريط تقدم الاختبار (يظهر فقط أثناء حل اختبار أسبوعي) -->
     <div id="quiz-progress-strip" class="hidden bg-[#102447] border-t border-white/10">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-2">
-        <div class="flex items-center justify-between text-xs font-bold text-slate-200 mb-1.5">
+      <div class="max-w-4xl mx-auto px-4 py-2">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-200 mb-1">
           <span id="progress-label">تمت الإجابة على 0 من 0</span>
           <span id="progress-pct" class="text-amber-300 font-black">0%</span>
         </div>
-        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+        <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
           <div id="progress-bar" class="h-full bg-amber-400 rounded-full transition-all duration-300" style="width: 0%"></div>
         </div>
       </div>
@@ -130,28 +129,28 @@
   </header>
 
   <!-- إشعار تنبيهي خفيف -->
-  <div id="toast-box" class="fixed bottom-5 left-4 right-4 sm:left-auto sm:right-6 z-50 hidden max-w-md">
-    <div class="bg-[#071124] text-white border border-amber-400/50 rounded-2xl px-4 py-3 shadow-2xl flex items-center justify-between gap-3">
-      <p id="toast-msg" class="text-xs sm:text-sm font-bold leading-relaxed"></p>
-      <button type="button" id="toast-close" class="text-amber-300 hover:text-white font-black text-sm shrink-0 cursor-pointer">
+  <div id="toast-box" class="fixed bottom-5 left-4 right-4 sm:left-auto sm:right-6 z-50 hidden max-w-sm">
+    <div class="bg-[#071124] text-white border border-amber-400/50 rounded-2xl px-4 py-3 shadow-xl flex items-center justify-between gap-3">
+      <p id="toast-msg" class="text-xs font-bold leading-relaxed"></p>
+      <button type="button" id="toast-close" class="text-amber-300 hover:text-white font-black text-xs shrink-0 cursor-pointer">
         ✕
       </button>
     </div>
   </div>
 
   <!-- =====================================================================
-       الحاوية الرئيسية للمحتوى
+       المحتوى الرئيسي
   ====================================================================== -->
-  <main id="app-root" class="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5"></main>
+  <main id="app-root" class="flex-1 w-full max-w-4xl mx-auto px-4 py-5 space-y-4"></main>
 
   <!-- =====================================================================
-       تنويه الاستقلالية + تذييل الصفحة وحقوق التصميم
+       تنويه الاستقلالية + الفوتر
   ====================================================================== -->
-  <footer class="bg-[#071124] text-slate-300 border-t border-white/10 mt-8">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 border-b border-white/10 text-[11px] sm:text-xs text-slate-300 text-center font-semibold">
+  <footer class="bg-[#071124] text-slate-300 border-t border-white/10 mt-6">
+    <div class="max-w-4xl mx-auto px-4 py-2.5 border-b border-white/10 text-[11px] text-slate-300 text-center font-semibold leading-relaxed">
       تنويه: منصة «طلاب MCI» مبادرة طلابية مستقلة لخدمة طلاب الفرقة الأولى — دفعة 2026، وغير تابعة رسمياً لإدارة المعهد.
     </div>
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-bold text-center sm:text-right">
+    <div class="max-w-4xl mx-auto px-4 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-xs font-bold text-center">
       <div>
         حقوق تصميم الموقع للطالب <span class="text-amber-300 font-black">محمود احمد</span>
       </div>
@@ -163,7 +162,7 @@
 
   <script>
     // =====================================================================
-    // 1. إعدادات الاتصال بـ Supabase
+    // 1. إعدادات الاتصال بـ Supabase والثوابت
     // =====================================================================
     const SUPABASE_URL = "https://rspibcrdzccmtypewkul.supabase.co";
     const SUPABASE_KEY = "sb_publishable_EAqDKk3U8UpZ2VCO9itiwQ_qpYHigKF";
@@ -173,9 +172,6 @@
     const SAVED_BRANCH_KEY = "mci_student_branch_2026";
     const HIDE_IOS_TIP_KEY = "mci_hide_ios_tip_2026";
 
-    // =====================================================================
-    // 2. الثوابت الأساسية للمعهد والمواد والشُعب
-    // =====================================================================
     const SUBJECTS_LIST = [
       { id: "all", name: "كل المواد" },
       { id: "english", name: "مبادئ إنجليزي" },
@@ -222,9 +218,6 @@
 
     const initialBranch = getSavedBranch();
 
-    // =====================================================================
-    // 3. حالة التطبيق العامة
-    // =====================================================================
     const state = {
       activeTab: "alerts",
       lectureSubject: "all",
@@ -258,7 +251,7 @@
       text.textContent = msg;
       box.classList.remove("hidden");
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => box.classList.add("hidden"), 3000);
+      toastTimer = setTimeout(() => box.classList.add("hidden"), 2800);
     }
 
     function escapeHtml(str) {
@@ -281,7 +274,7 @@
     }
 
     // =====================================================================
-    // 4. جلب البيانات من جداول Supabase
+    // 2. جلب البيانات من Supabase
     // =====================================================================
     async function loadFromSupabase(notify = false) {
       liveStore.loading = true;
@@ -336,27 +329,27 @@
         }
 
         liveStore.loading = false;
-        if (notify) showToast("تم تحديث البيانات من السيرفر بنجاح ✓");
+        if (notify) showToast("تم التحديث ✓");
       } catch (err) {
         console.error("Supabase error:", err);
         liveStore.loading = false;
         liveStore.error = err.message || "تعذر الاتصال بقاعدة البيانات حالياً.";
-        if (notify) showToast("حدث خطأ أثناء التحديث، تأكد من اتصال الإنترنت.");
+        if (notify) showToast("تعذر التحديث الآن");
       }
 
       render();
     }
 
     // =====================================================================
-    // 5. شريط التنقل + شريط التقدم + شريط الشعبة المفضلة وإرشاد الآيفون
+    // 3. عناصر الواجهة المشتركة (مرتبة وخفيفة على الموبايل)
     // =====================================================================
     function updateNavTabs() {
       document.querySelectorAll(".nav-tab").forEach((btn) => {
         const tab = btn.getAttribute("data-tab");
         if (tab === state.activeTab) {
-          btn.className = "nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 shadow transition cursor-pointer";
+          btn.className = "nav-tab shrink-0 px-3 py-1.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 transition cursor-pointer";
         } else {
-          btn.className = "nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 text-slate-200 hover:bg-white/20 transition cursor-pointer";
+          btn.className = "nav-tab shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/10 text-slate-200 hover:bg-white/20 transition cursor-pointer";
         }
       });
     }
@@ -372,62 +365,56 @@
       const total = state.questions.length;
       const answered = state.questions.filter((q) => state.answers[q.id] !== undefined).length;
       const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
-      progressLabel.textContent = `تمت الإجابة على ${answered} من ${total} سؤال`;
+      progressLabel.textContent = `تمت الإجابة على ${answered} من ${total}`;
       progressPct.textContent = `${pct}%`;
       progressBar.style.width = `${pct}%`;
     }
 
-    function renderStudentQuickBar() {
+    function renderPrefAndIosStrip() {
       const savedBranch = getSavedBranch();
       const showIosTip = localStorage.getItem(HIDE_IOS_TIP_KEY) !== "1";
 
       return `
-        <div class="surface-card rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="text-xs font-black text-[#071124]">شعبتي المفضلة:</span>
-            ${BRANCHES_LIST.map((b) => {
-              const active = savedBranch === b.id;
-              return `
-                <button
-                  type="button"
-                  data-pref-branch="${b.id}"
-                  class="px-3 py-1 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                    active
-                      ? "bg-[#071124] text-white border-[#071124]"
-                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                  }"
-                >
-                  ${b.name}
-                </button>
-              `;
-            }).join("")}
+        <div class="clean-card rounded-2xl p-3 space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <label for="quick-branch-select" class="text-xs font-black text-[#071124] shrink-0">
+              شعبتي المفضلة:
+            </label>
+            <select
+              id="quick-branch-select"
+              class="flex-1 max-w-[220px] px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-extrabold text-slate-800 focus:outline-none focus:border-[#071124]"
+            >
+              ${BRANCHES_LIST.map(
+                (b) => `<option value="${b.id}" ${b.id === savedBranch ? "selected" : ""}>${b.name}</option>`
+              ).join("")}
+            </select>
           </div>
 
           ${
             showIosTip
-              ? `<div class="flex items-center justify-between sm:justify-end gap-2 text-[11px] font-bold text-slate-600 bg-amber-50/80 border border-amber-200/80 px-3 py-1.5 rounded-xl">
-                  <span>آيفون: من Safari اضغط <strong>Share</strong> ثم <strong>Add to Home Screen</strong> لتثبيت الأيقونة.</span>
-                  <button type="button" id="hide-ios-tip-btn" class="text-slate-500 hover:text-slate-900 font-black cursor-pointer">✕</button>
+              ? `<div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600 font-semibold">
+                  <span>للآيفون: من Safari اضغط <strong>Share</strong> ثم <strong>Add to Home Screen</strong>.</span>
+                  <button type="button" id="hide-ios-tip-btn" class="text-slate-400 hover:text-slate-700 font-black px-1 cursor-pointer">✕</button>
                 </div>`
-              : `<span class="text-[11px] font-bold text-slate-500">يتم حفظ شعبتك تلقائياً على جهازك</span>`
+              : ""
           }
         </div>
       `;
     }
 
-    function bindStudentQuickBar() {
-      document.querySelectorAll("[data-pref-branch]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const bId = btn.getAttribute("data-pref-branch");
-          savePreferredBranch(bId);
+    function bindPrefAndIosStrip() {
+      const sel = document.getElementById("quick-branch-select");
+      if (sel) {
+        sel.addEventListener("change", () => {
+          savePreferredBranch(sel.value);
           showToast(
-            bId === "all"
+            sel.value === "all"
               ? "تم ضبط العرض على كل الشُعب"
-              : `تم حفظ شعبتك (${getBranchName(bId)}) تلقائياً ✓`
+              : `تم حفظ شعبتك (${getBranchName(sel.value)}) تلقائياً ✓`
           );
           render();
         });
-      });
+      }
 
       const hideBtn = document.getElementById("hide-ios-tip-btn");
       if (hideBtn) {
@@ -438,17 +425,26 @@
       }
     }
 
-    function renderLoadingBox(text = "جاري تحميل أحدث البيانات من السيرفر...") {
+    function renderSectionBanner(title, desc) {
       return `
-        <div class="surface-card rounded-2xl p-8 text-center space-y-2">
-          <div class="inline-block w-7 h-7 border-4 border-[#071124] border-t-amber-400 rounded-full animate-spin"></div>
-          <p class="text-xs sm:text-sm font-extrabold text-slate-700">${escapeHtml(text)}</p>
+        <div class="clean-card rounded-2xl p-4 sm:p-5 bg-[#071124] text-white border-[#071124]">
+          <h1 class="text-lg sm:text-xl font-black text-white">${title}</h1>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">${desc}</p>
+        </div>
+      `;
+    }
+
+    function renderLoadingBox(text = "جاري التحميل...") {
+      return `
+        <div class="clean-card rounded-2xl p-7 text-center space-y-2">
+          <div class="inline-block w-6 h-6 border-[3px] border-[#071124] border-t-amber-400 rounded-full animate-spin"></div>
+          <p class="text-xs font-extrabold text-slate-600">${escapeHtml(text)}</p>
         </div>
       `;
     }
 
     // =====================================================================
-    // 6. قسم التنبيهات العاجلة والملاحظات
+    // 4. التنبيهات
     // =====================================================================
     function renderAlertsTab() {
       const list = liveStore.alerts.filter((item) => {
@@ -459,85 +455,64 @@
       });
 
       appEl.innerHTML = `
-        ${renderStudentQuickBar()}
+        ${renderPrefAndIosStrip()}
+        ${renderSectionBanner("🔔 التنبيهات وملاحظات الدكاترة", "مواعيد المراجعات، تعديل الجداول، والنقاط المهمة أول بأول.")}
 
-        <div class="space-y-5">
-          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
-            <h1 class="text-xl sm:text-2xl font-black text-white">🔔 التنبيهات وملاحظات الدكاترة</h1>
-            <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              أهم التنبيهات حول مواعيد المراجعات، تعديلات الجدول، والنقاط المهمة التي أكد عليها الدكاترة في المحاضرات.
-            </p>
-          </div>
-
-          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-            ${SUBJECTS_LIST.map(
-              (s) => `
-                <button
-                  type="button"
-                  data-alert-subj="${s.id}"
-                  class="shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                    state.alertSubject === s.id
-                      ? "bg-[#071124] text-white border-[#071124]"
-                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                  }"
-                >
-                  ${s.name}
-                </button>
-              `
-            ).join("")}
-          </div>
-
-          ${
-            liveStore.loading
-              ? renderLoadingBox("جاري تحميل التنبيهات...")
-              : `
-                <div class="space-y-3.5">
-                  ${
-                    list.length === 0
-                      ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                          لا توجد تنبيهات مضافة لهذا التصنيف حالياً.
-                        </div>`
-                      : list
-                          .map(
-                            (item) => `
-                              <div class="surface-card rounded-2xl p-4 sm:p-5 border-r-4 ${
-                                item.is_important ? "border-r-rose-600 bg-rose-50/20" : "border-r-amber-400"
-                              } space-y-2">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                  <div class="flex flex-wrap items-center gap-2">
-                                    ${
-                                      item.is_important
-                                        ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white">تنبيه هام</span>`
-                                        : `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900">ملاحظة</span>`
-                                    }
-                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-800">
-                                      ${escapeHtml(getSubjectName(item.subject_id || "all"))}
-                                    </span>
-                                    ${
-                                      item.branch && item.branch !== "all"
-                                        ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
-                                            شعبة: ${escapeHtml(getBranchName(item.branch))}
-                                          </span>`
-                                        : ""
-                                    }
-                                  </div>
-                                  <span class="text-xs font-bold text-slate-500">${escapeHtml(item.display_date || "")}</span>
-                                </div>
-
-                                <h2 class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(item.title)}</h2>
-                                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(item.details)}</p>
-                              </div>
-                            `
-                          )
-                          .join("")
-                  }
-                </div>
-              `
-          }
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+          ${SUBJECTS_LIST.map(
+            (s) => `
+              <button
+                type="button"
+                data-alert-subj="${s.id}"
+                class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                  state.alertSubject === s.id
+                    ? "bg-[#071124] text-white border-[#071124]"
+                    : "bg-white text-slate-700 border-slate-200"
+                }"
+              >
+                ${s.name}
+              </button>
+            `
+          ).join("")}
         </div>
+
+        ${
+          liveStore.loading
+            ? renderLoadingBox("جاري تحميل التنبيهات...")
+            : list.length === 0
+              ? `<div class="clean-card rounded-2xl p-6 text-center text-xs sm:text-sm font-bold text-slate-500">لا توجد تنبيهات حالياً.</div>`
+              : `<div class="space-y-3">
+                  ${list
+                    .map(
+                      (item) => `
+                        <article class="clean-card rounded-2xl p-4 border-r-4 ${
+                          item.is_important ? "border-r-rose-600" : "border-r-amber-400"
+                        } space-y-2">
+                          <div class="flex items-center justify-between gap-2 text-[11px]">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                              ${
+                                item.is_important
+                                  ? `<span class="px-2 py-0.5 rounded-md font-black bg-rose-600 text-white">تنبيه هام</span>`
+                                  : `<span class="px-2 py-0.5 rounded-md font-extrabold bg-amber-100 text-amber-950">ملاحظة</span>`
+                              }
+                              <span class="px-2 py-0.5 rounded-md font-bold bg-slate-100 text-slate-700">
+                                ${escapeHtml(getSubjectName(item.subject_id || "all"))}
+                              </span>
+                            </div>
+                            <span class="font-bold text-slate-400 shrink-0">${escapeHtml(item.display_date || "")}</span>
+                          </div>
+
+                          <h2 class="text-sm sm:text-base font-black text-[#071124]">${escapeHtml(item.title)}</h2>
+                          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(item.details)}</p>
+                        </article>
+                      `
+                    )
+                    .join("")}
+                </div>`
+        }
       `;
 
-      bindStudentQuickBar();
+      bindPrefAndIosStrip();
       document.querySelectorAll("[data-alert-subj]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.alertSubject = btn.getAttribute("data-alert-subj");
@@ -547,7 +522,7 @@
     }
 
     // =====================================================================
-    // 7. قسم ملخصات المحاضرات
+    // 5. ملخصات المحاضرات
     // =====================================================================
     function renderLecturesTab() {
       const list = liveStore.lectures.filter((lec) => {
@@ -559,131 +534,93 @@
       });
 
       appEl.innerHTML = `
-        ${renderStudentQuickBar()}
+        ${renderPrefAndIosStrip()}
+        ${renderSectionBanner("📚 ملخصات المحاضرات", "ملخصات مرتبة حسب المادة والشعبة ليسهل الوصول إليها.")}
 
-        <div class="space-y-5">
-          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
-            <h1 class="text-xl sm:text-2xl font-black text-white">📚 ملخصات المحاضرات</h1>
-            <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              ملخصات منظمة لكل محاضرة حسب المادة والشعبة أول بأول.
-            </p>
-          </div>
-
-          <div class="surface-card rounded-2xl p-4 space-y-3">
-            <div>
-              <div class="text-xs font-black text-slate-600 mb-2">تصفية حسب المادة:</div>
-              <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-                ${SUBJECTS_LIST.map(
-                  (s) => `
-                    <button
-                      type="button"
-                      data-lec-subj="${s.id}"
-                      class="shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                        state.lectureSubject === s.id
-                          ? "bg-[#071124] text-white border-[#071124]"
-                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                      }"
-                    >
-                      ${s.name}
-                    </button>
-                  `
-                ).join("")}
-              </div>
-            </div>
-
-            <div>
-              <div class="text-xs font-black text-slate-600 mb-2">تصفية حسب الشعبة:</div>
-              <div class="flex flex-wrap items-center gap-2">
-                ${BRANCHES_LIST.map(
-                  (b) => `
-                    <button
-                      type="button"
-                      data-lec-branch="${b.id}"
-                      class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                        state.lectureBranch === b.id
-                          ? "bg-amber-400 text-slate-950 border-amber-500"
-                          : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                      }"
-                    >
-                      ${b.name}
-                    </button>
-                  `
-                ).join("")}
-              </div>
-            </div>
-          </div>
-
-          ${
-            liveStore.loading
-              ? renderLoadingBox("جاري تحميل ملخصات المحاضرات...")
-              : `
-                <div class="space-y-4">
-                  ${
-                    list.length === 0
-                      ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                          لا توجد ملخصات مضافة لهذا التصنيف بعد.
-                        </div>`
-                      : list
-                          .map(
-                            (lec) => `
-                              <article class="surface-card rounded-2xl p-5 space-y-3">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                  <div class="flex flex-wrap items-center gap-2">
-                                    <span class="px-3 py-1 rounded-xl text-xs font-black bg-[#071124] text-white">
-                                      ${escapeHtml(getSubjectName(lec.subject_id))}
-                                    </span>
-                                    <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-950 border border-amber-200">
-                                      ${escapeHtml(lec.lecture_title)}
-                                    </span>
-                                    ${
-                                      lec.doctor
-                                        ? `<span class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 text-slate-800">
-                                            ${escapeHtml(lec.doctor)}
-                                          </span>`
-                                        : ""
-                                    }
-                                    ${
-                                      lec.branch && lec.branch !== "all"
-                                        ? `<span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
-                                            ${escapeHtml(getBranchName(lec.branch))}
-                                          </span>`
-                                        : ""
-                                    }
-                                  </div>
-                                  <span class="text-xs font-bold text-slate-500">${escapeHtml(lec.display_date || "")}</span>
-                                </div>
-
-                                <div class="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line bg-slate-50/80 p-4 rounded-xl border border-slate-200/80">
-                                  ${escapeHtml(lec.summary)}
-                                </div>
-
-                                ${
-                                  lec.pdf_link
-                                    ? `<div>
-                                        <a
-                                          href="${escapeHtml(lec.pdf_link)}"
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black bg-indigo-700 hover:bg-indigo-800 text-white transition"
-                                        >
-                                          <span>فتح ملف الملخص / PDF</span>
-                                          <span>↗</span>
-                                        </a>
-                                      </div>`
-                                    : ""
-                                }
-                              </article>
-                            `
-                          )
-                          .join("")
-                  }
-                </div>
+        <div class="clean-card rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            ${SUBJECTS_LIST.map(
+              (s) => `
+                <button
+                  type="button"
+                  data-lec-subj="${s.id}"
+                  class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                    state.lectureSubject === s.id
+                      ? "bg-[#071124] text-white border-[#071124]"
+                      : "bg-slate-50 text-slate-700 border-slate-200"
+                  }"
+                >
+                  ${s.name}
+                </button>
               `
-          }
+            ).join("")}
+          </div>
+
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-slate-100">
+            ${BRANCHES_LIST.map(
+              (b) => `
+                <button
+                  type="button"
+                  data-lec-branch="${b.id}"
+                  class="shrink-0 px-3 py-1 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                    state.lectureBranch === b.id
+                      ? "bg-amber-400 text-slate-950 border-amber-500"
+                      : "bg-white text-slate-600 border-slate-200"
+                  }"
+                >
+                  ${b.name}
+                </button>
+              `
+            ).join("")}
+          </div>
         </div>
+
+        ${
+          liveStore.loading
+            ? renderLoadingBox("جاري تحميل المحاضرات...")
+            : list.length === 0
+              ? `<div class="clean-card rounded-2xl p-6 text-center text-xs sm:text-sm font-bold text-slate-500">لا توجد ملخصات لهذا التصنيف حالياً.</div>`
+              : `<div class="space-y-3">
+                  ${list
+                    .map(
+                      (lec) => `
+                        <article class="clean-card rounded-2xl p-4 space-y-2.5">
+                          <div class="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                              <span class="px-2.5 py-0.5 rounded-md font-black bg-[#071124] text-white">${escapeHtml(getSubjectName(lec.subject_id))}</span>
+                              ${
+                                lec.branch && lec.branch !== "all"
+                                  ? `<span class="px-2.5 py-0.5 rounded-md font-extrabold bg-indigo-50 text-indigo-900">${escapeHtml(getBranchName(lec.branch))}</span>`
+                                  : ""
+                              }
+                              ${lec.doctor ? `<span class="font-bold text-slate-500">${escapeHtml(lec.doctor)}</span>` : ""}
+                            </div>
+                            <span class="font-bold text-slate-400">${escapeHtml(lec.display_date || "")}</span>
+                          </div>
+
+                          <h2 class="text-sm sm:text-base font-black text-[#071124]">${escapeHtml(lec.lecture_title)}</h2>
+
+                          <div class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            ${escapeHtml(lec.summary)}
+                          </div>
+
+                          ${
+                            lec.pdf_link
+                              ? `<a href="${escapeHtml(lec.pdf_link)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-black text-indigo-700 hover:underline">
+                                  <span>فتح ملف الملخص</span>
+                                  <span>↗</span>
+                                </a>`
+                              : ""
+                          }
+                        </article>
+                      `
+                    )
+                    .join("")}
+                </div>`
+        }
       `;
 
-      bindStudentQuickBar();
+      bindPrefAndIosStrip();
       document.querySelectorAll("[data-lec-subj]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.lectureSubject = btn.getAttribute("data-lec-subj");
@@ -700,7 +637,7 @@
     }
 
     // =====================================================================
-    // 8. قسم التكليفات (شيت - بحث - مناقشة) مقسّم حسب الشُعب
+    // 6. التكليفات (شيت - بحث - مناقشة)
     // =====================================================================
     function renderAssignmentsTab() {
       const list = liveStore.assignments.filter((item) => {
@@ -716,143 +653,112 @@
         return true;
       });
 
-      const typeBadgeColor = (type) => {
-        if (type === "شيت") return "bg-sky-100 text-sky-900 border-sky-200";
-        if (type === "بحث") return "bg-purple-100 text-purple-900 border-purple-200";
-        if (type === "مناقشة") return "bg-emerald-100 text-emerald-900 border-emerald-200";
-        return "bg-slate-100 text-slate-800 border-slate-200";
+      const typeBadge = (type) => {
+        if (type === "شيت") return "bg-sky-100 text-sky-900";
+        if (type === "بحث") return "bg-purple-100 text-purple-900";
+        if (type === "مناقشة") return "bg-emerald-100 text-emerald-900";
+        return "bg-slate-100 text-slate-800";
       };
 
       appEl.innerHTML = `
-        ${renderStudentQuickBar()}
+        ${renderPrefAndIosStrip()}
+        ${renderSectionBanner("📝 التكليفات (شيت • بحث • مناقشة)", "متابعة المطلوب حسب الشعبة والمادة ومواعيد التسليم.")}
 
-        <div class="space-y-5">
-          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
-            <h1 class="text-xl sm:text-2xl font-black text-white">📝 التكليفات المطلوبة (شيت • بحث • مناقشة)</h1>
-            <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              الشيتات والأبحاث والمناقشات المطلوبة حسب الشعبة والمادة ومواعيد التسليم.
-            </p>
-          </div>
-
-          <div class="surface-card rounded-2xl p-4 space-y-4">
-            <div>
-              <div class="text-xs font-black text-[#071124] mb-2">1. الشعبة:</div>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                ${BRANCHES_LIST.map(
-                  (b) => `
-                    <button
-                      type="button"
-                      data-asg-branch="${b.id}"
-                      class="px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black border-2 transition cursor-pointer ${
-                        state.assignBranch === b.id
-                          ? "border-[#071124] bg-[#071124] text-white"
-                          : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50"
-                      }"
-                    >
-                      ${b.name}
-                    </button>
-                  `
-                ).join("")}
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
-              <div>
-                <div class="text-xs font-black text-slate-600 mb-2">2. نوع التكليف:</div>
-                <div class="flex flex-wrap gap-1.5">
-                  ${TASK_TYPES_LIST.map(
-                    (t) => `
-                      <button
-                        type="button"
-                        data-asg-type="${t.id}"
-                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                          state.assignType === t.id
-                            ? "bg-amber-400 text-slate-950 border-amber-500"
-                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                        }"
-                      >
-                        ${t.name}
-                      </button>
-                    `
-                  ).join("")}
-                </div>
-              </div>
-
-              <div>
-                <div class="text-xs font-black text-slate-600 mb-2">3. المادة:</div>
-                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-                  ${SUBJECTS_LIST.map(
-                    (s) => `
-                      <button
-                        type="button"
-                        data-asg-subj="${s.id}"
-                        class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                          state.assignSubject === s.id
-                            ? "bg-[#071124] text-white border-[#071124]"
-                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                        }"
-                      >
-                        ${s.name}
-                      </button>
-                    `
-                  ).join("")}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          ${
-            liveStore.loading
-              ? renderLoadingBox("جاري تحميل التكليفات والشيتات...")
-              : `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  ${
-                    list.length === 0
-                      ? `<div class="md:col-span-2 surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                          لا توجد تكليفات مطابقة للاختيارات الحالية.
-                        </div>`
-                      : list
-                          .map(
-                            (item) => `
-                              <div class="surface-card rounded-2xl p-5 flex flex-col justify-between gap-3">
-                                <div class="space-y-2.5">
-                                  <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <span class="px-3 py-1 rounded-full text-xs font-black border ${typeBadgeColor(item.task_type)}">
-                                      ${escapeHtml(item.task_type)}
-                                    </span>
-                                    <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-950 border border-indigo-200">
-                                      ${item.branch === "all" ? "كل الشُعب" : `شعبة: ${escapeHtml(getBranchName(item.branch))}`}
-                                    </span>
-                                  </div>
-
-                                  <div class="text-base font-black text-[#071124]">
-                                    ${escapeHtml(getSubjectName(item.subject_id))}
-                                    ${item.doctor ? `<span class="text-xs font-bold text-slate-500">(${escapeHtml(item.doctor)})</span>` : ""}
-                                  </div>
-
-                                  <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                                    ${escapeHtml(item.task_details)}
-                                  </p>
-                                </div>
-
-                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold">
-                                  <span class="text-slate-500">موعد التسليم / المناقشة:</span>
-                                  <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950">
-                                    ${escapeHtml(item.deadline || "يُحدد في المحاضرة")}
-                                  </span>
-                                </div>
-                              </div>
-                            `
-                          )
-                          .join("")
-                  }
-                </div>
+        <div class="clean-card rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            ${BRANCHES_LIST.map(
+              (b) => `
+                <button
+                  type="button"
+                  data-asg-branch="${b.id}"
+                  class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                    state.assignBranch === b.id
+                      ? "bg-[#071124] text-white border-[#071124]"
+                      : "bg-slate-50 text-slate-700 border-slate-200"
+                  }"
+                >
+                  ${b.name}
+                </button>
               `
-          }
+            ).join("")}
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
+            ${TASK_TYPES_LIST.map(
+              (t) => `
+                <button
+                  type="button"
+                  data-asg-type="${t.id}"
+                  class="px-3 py-1 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                    state.assignType === t.id
+                      ? "bg-amber-400 text-slate-950 border-amber-500"
+                      : "bg-white text-slate-600 border-slate-200"
+                  }"
+                >
+                  ${t.name}
+                </button>
+              `
+            ).join("")}
+          </div>
+
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-slate-100">
+            ${SUBJECTS_LIST.map(
+              (s) => `
+                <button
+                  type="button"
+                  data-asg-subj="${s.id}"
+                  class="shrink-0 px-3 py-1 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                    state.assignSubject === s.id
+                      ? "bg-slate-800 text-white border-slate-800"
+                      : "bg-slate-50 text-slate-600 border-slate-200"
+                  }"
+                >
+                  ${s.name}
+                </button>
+              `
+            ).join("")}
+          </div>
         </div>
+
+        ${
+          liveStore.loading
+            ? renderLoadingBox("جاري تحميل التكليفات...")
+            : list.length === 0
+              ? `<div class="clean-card rounded-2xl p-6 text-center text-xs sm:text-sm font-bold text-slate-500">لا توجد تكليفات مطابقة حالياً.</div>`
+              : `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  ${list
+                    .map(
+                      (item) => `
+                        <div class="clean-card rounded-2xl p-4 flex flex-col justify-between gap-3">
+                          <div class="space-y-2">
+                            <div class="flex items-center justify-between gap-2 text-[11px]">
+                              <span class="px-2.5 py-0.5 rounded-md font-black ${typeBadge(item.task_type)}">${escapeHtml(item.task_type)}</span>
+                              <span class="font-extrabold text-indigo-900">
+                                ${item.branch === "all" ? "كل الشُعب" : escapeHtml(getBranchName(item.branch))}
+                              </span>
+                            </div>
+
+                            <div class="text-sm font-black text-[#071124]">
+                              ${escapeHtml(getSubjectName(item.subject_id))}
+                              ${item.doctor ? `<span class="text-xs font-semibold text-slate-500">• ${escapeHtml(item.doctor)}</span>` : ""}
+                            </div>
+
+                            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(item.task_details)}</p>
+                          </div>
+
+                          <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] font-extrabold">
+                            <span class="text-slate-400">الموعد:</span>
+                            <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-950">${escapeHtml(item.deadline || "يُحدد")}</span>
+                          </div>
+                        </div>
+                      `
+                    )
+                    .join("")}
+                </div>`
+        }
       `;
 
-      bindStudentQuickBar();
+      bindPrefAndIosStrip();
       document.querySelectorAll("[data-asg-branch]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.assignBranch = btn.getAttribute("data-asg-branch");
@@ -876,7 +782,7 @@
     }
 
     // =====================================================================
-    // 9. قسم الأسئلة الأسبوعية (تجميع كل أسبوع كاختبار تفاعلي من Supabase)
+    // 7. الأسئلة الأسبوعية
     // =====================================================================
     function renderWeeklySetup() {
       const packs = liveStore.weeklyQuizzes;
@@ -887,101 +793,81 @@
       const selectedPack = packs.find((p) => p.id === state.selectedWeeklyId);
 
       appEl.innerHTML = `
-        ${renderStudentQuickBar()}
+        ${renderPrefAndIosStrip()}
+        ${renderSectionBanner("🎯 الأسئلة الأسبوعية", "تجميعات أسئلة أول بأول للمراجعة وتثبيت المعلومة.")}
 
-        <div class="space-y-5">
-          <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
-            <h1 class="text-xl sm:text-2xl font-black text-white">🎯 الأسئلة الأسبوعية (تجميع أول بأول)</h1>
-            <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              اختبارات قصيرة وشاملة على كل اللي اتاخد خلال الأسبوع للمراجعة أول بأول والاستعداد للفاينل.
-            </p>
-          </div>
+        ${
+          liveStore.loading
+            ? renderLoadingBox("جاري تحميل الأسئلة الأسبوعية...")
+            : packs.length === 0
+              ? `<div class="clean-card rounded-2xl p-6 text-center text-xs sm:text-sm font-bold text-slate-500">لا توجد أسئلة أسبوعية مضافة بعد.</div>`
+              : `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  ${packs
+                    .map((pack) => {
+                      const isSel = pack.id === state.selectedWeeklyId;
+                      return `
+                        <button
+                          type="button"
+                          data-pick-weekly="${escapeHtml(pack.id)}"
+                          class="clean-card rounded-2xl p-4 text-right border-2 transition cursor-pointer ${
+                            isSel ? "border-[#071124]" : "border-transparent"
+                          }"
+                        >
+                          <div class="flex items-center justify-between gap-2 mb-1.5">
+                            <span class="px-2.5 py-0.5 rounded-md text-[11px] font-black bg-emerald-100 text-emerald-900">
+                              ${pack.questions.length} سؤال
+                            </span>
+                            ${isSel ? `<span class="text-xs font-black text-[#071124]">✓ مختارة</span>` : ""}
+                          </div>
+                          <div class="text-sm sm:text-base font-black text-[#071124]">${escapeHtml(pack.title)}</div>
+                        </button>
+                      `;
+                    })
+                    .join("")}
+                </div>
 
-          ${
-            liveStore.loading
-              ? renderLoadingBox("جاري تحميل الأسئلة الأسبوعية...")
-              : packs.length === 0
-                ? `<div class="surface-card rounded-2xl p-6 text-center text-sm font-bold text-slate-600">
-                    لا توجد أسئلة أسبوعية مضافة بعد. سيتم نزولها أول بأول بعد المحاضرات.
-                  </div>`
-                : `
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    ${packs
-                      .map((pack) => {
-                        const isSel = pack.id === state.selectedWeeklyId;
-                        return `
+                ${
+                  selectedPack
+                    ? `<div class="clean-card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="flex flex-wrap gap-2">
                           <button
                             type="button"
-                            data-pick-weekly="${escapeHtml(pack.id)}"
-                            class="surface-card rounded-2xl p-4 sm:p-5 text-right border-2 transition cursor-pointer ${
-                              isSel
-                                ? "border-[#071124] ring-2 ring-[#071124]/15"
-                                : "border-slate-200 hover:border-slate-300"
+                            data-wgrd="end"
+                            class="px-3 py-2 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                              state.gradingMode === "end"
+                                ? "bg-[#071124] text-white border-[#071124]"
+                                : "bg-slate-50 text-slate-700 border-slate-200"
                             }"
                           >
-                            <div class="flex items-center justify-between gap-2 mb-2">
-                              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-200">
-                                ${pack.questions.length} سؤال
-                              </span>
-                              ${isSel ? `<span class="text-xs font-black text-[#071124]">✓ مختارة</span>` : ""}
-                            </div>
-                            <div class="text-base sm:text-lg font-black text-[#071124]">${escapeHtml(pack.title)}</div>
-                            <div class="text-xs text-slate-600 mt-1">${escapeHtml(pack.subtitle || "")}</div>
+                            تصحيح نهائي
                           </button>
-                        `;
-                      })
-                      .join("")}
-                  </div>
-
-                  ${
-                    selectedPack
-                      ? `
-                        <div class="surface-card rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                          <div class="space-y-1">
-                            <div class="text-sm font-black text-[#071124]">طريقة التصحيح:</div>
-                            <div class="flex flex-wrap gap-2 pt-1">
-                              <button
-                                type="button"
-                                data-wgrd="instant"
-                                class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
-                                  state.gradingMode === "instant"
-                                    ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
-                                    : "border-slate-200 text-slate-700"
-                                }"
-                              >
-                                تصحيح فوري أثناء الحل
-                              </button>
-                              <button
-                                type="button"
-                                data-wgrd="end"
-                                class="px-3.5 py-2 rounded-xl text-xs font-extrabold border-2 transition cursor-pointer ${
-                                  state.gradingMode === "end"
-                                    ? "border-[#071124] bg-[#071124]/5 text-[#071124]"
-                                    : "border-slate-200 text-slate-700"
-                                }"
-                              >
-                                تصحيح نهائي بعد التسليم
-                              </button>
-                            </div>
-                          </div>
-
                           <button
                             type="button"
-                            id="start-weekly-btn"
-                            class="px-7 py-3.5 rounded-2xl text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow transition cursor-pointer shrink-0"
+                            data-wgrd="instant"
+                            class="px-3 py-2 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                              state.gradingMode === "instant"
+                                ? "bg-[#071124] text-white border-[#071124]"
+                                : "bg-slate-50 text-slate-700 border-slate-200"
+                            }"
                           >
-                            ابدأ اختبار الأسبوع ←
+                            تصحيح فوري
                           </button>
                         </div>
-                      `
-                      : ""
-                  }
-                `
-          }
-        </div>
+
+                        <button
+                          type="button"
+                          id="start-weekly-btn"
+                          class="w-full sm:w-auto px-6 py-3 rounded-xl text-xs sm:text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white transition cursor-pointer"
+                        >
+                          ابدأ الاختبار ←
+                        </button>
+                      </div>`
+                    : ""
+                }`
+        }
       `;
 
-      bindStudentQuickBar();
+      bindPrefAndIosStrip();
       document.querySelectorAll("[data-pick-weekly]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.selectedWeeklyId = btn.getAttribute("data-pick-weekly");
@@ -1000,7 +886,7 @@
       if (startWBtn && selectedPack) {
         startWBtn.addEventListener("click", () => {
           if (!selectedPack.questions || !selectedPack.questions.length) {
-            showToast("لا توجد أسئلة في هذه المجموعة بعد.");
+            showToast("لا توجد أسئلة في هذه المجموعة");
             return;
           }
           state.quizSource = "weekly";
@@ -1016,7 +902,7 @@
     }
 
     // =====================================================================
-    // 10. إغلاق صفحة الميدتيرم والعدّ التنازلي للفاينل (2 / 1 / 2027)
+    // 8. صفحة إغلاق الميدتيرم والعدّ التنازلي للفاينل (2 / 1 / 2027)
     // =====================================================================
     function getCountdownParts() {
       const target = new Date(FINALS_DATE_ISO);
@@ -1061,94 +947,64 @@
       const c = getCountdownParts();
 
       appEl.innerHTML = `
-        ${renderStudentQuickBar()}
+        ${renderPrefAndIosStrip()}
 
-        <div class="space-y-6">
-          <div class="surface-card rounded-3xl p-6 sm:p-8 bg-[#071124] text-white border-[#071124]">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div class="space-y-2 max-w-2xl">
-                <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-                  <span>✓ تم الانتهاء من امتحانات الميدتيرم</span>
-                  <span>•</span>
-                  <span id="cd-status">${c.expired ? "بدأ موعد امتحانات الفاينل (2 / 1 / 2027)" : "الموعد المقرر للفاينل حتى الآن من المعهد: 2 / 1 / 2027"}</span>
-                </div>
+        <div class="clean-card rounded-2xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124] space-y-5">
+          <div class="space-y-1.5">
+            <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-black bg-emerald-500/20 text-emerald-300">
+              تم الانتهاء من امتحانات الميدتيرم
+            </span>
+            <h1 class="text-xl sm:text-2xl font-black text-white">
+              تم الانتهاء من امتحانات الميدتيرم
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-semibold">
+              تم إغلاق صفحة أسئلة الميدتيرم، ونشوفكم في <span class="text-amber-300 font-black">مراجعات الفاينل إن شاء الله</span>. المعاد المقرر للفاينل حتى الآن من المعهد هو <strong class="text-white">2 / 1 / 2027</strong>.
+            </p>
+          </div>
 
-                <h1 class="text-2xl sm:text-3xl font-black text-white pt-1">
-                  تم الانتهاء من امتحانات الميدتيرم
-                </h1>
-
-                <p class="text-sm sm:text-base text-slate-200 leading-relaxed font-semibold">
-                  صفحة أسئلة الميدتيرم مغلقة حالياً بعد انتهاء المرحلة. نكمل سوا أول بأول في المحاضرات والتكليفات والأسئلة الأسبوعية، ونشوفكم في <span class="text-amber-300 font-black">مراجعات الفاينل إن شاء الله</span>.
-                </p>
-              </div>
-
-              <div class="grid grid-cols-4 gap-2.5 text-center shrink-0" dir="ltr">
-                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
-                  <div id="cd-days" class="text-lg sm:text-2xl font-black text-amber-300">${pad2(c.days)}</div>
-                  <div class="text-[11px] font-bold text-slate-300">يوم</div>
-                </div>
-                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
-                  <div id="cd-hours" class="text-lg sm:text-2xl font-black text-white">${pad2(c.hours)}</div>
-                  <div class="text-[11px] font-bold text-slate-300">ساعة</div>
-                </div>
-                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
-                  <div id="cd-minutes" class="text-lg sm:text-2xl font-black text-white">${pad2(c.minutes)}</div>
-                  <div class="text-[11px] font-bold text-slate-300">دقيقة</div>
-                </div>
-                <div class="bg-white/10 border border-white/15 rounded-2xl px-3 py-2.5 min-w-[68px]">
-                  <div id="cd-seconds" class="text-lg sm:text-2xl font-black text-amber-300">${pad2(c.seconds)}</div>
-                  <div class="text-[11px] font-bold text-slate-300">ثانية</div>
-                </div>
-              </div>
+          <div class="grid grid-cols-4 gap-2 text-center" dir="ltr">
+            <div class="bg-white/10 rounded-xl py-2 px-1">
+              <div id="cd-days" class="text-base sm:text-xl font-black text-amber-300">${pad2(c.days)}</div>
+              <div class="text-[10px] font-bold text-slate-300">يوم</div>
+            </div>
+            <div class="bg-white/10 rounded-xl py-2 px-1">
+              <div id="cd-hours" class="text-base sm:text-xl font-black text-white">${pad2(c.hours)}</div>
+              <div class="text-[10px] font-bold text-slate-300">ساعة</div>
+            </div>
+            <div class="bg-white/10 rounded-xl py-2 px-1">
+              <div id="cd-minutes" class="text-base sm:text-xl font-black text-white">${pad2(c.minutes)}</div>
+              <div class="text-[10px] font-bold text-slate-300">دقيقة</div>
+            </div>
+            <div class="bg-white/10 rounded-xl py-2 px-1">
+              <div id="cd-seconds" class="text-base sm:text-xl font-black text-amber-300">${pad2(c.seconds)}</div>
+              <div class="text-[10px] font-bold text-slate-300">ثانية</div>
             </div>
           </div>
 
-          <div class="surface-card rounded-3xl p-6 sm:p-7 space-y-5">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
-              <div>
-                <h2 class="text-lg font-black text-[#071124]">نشوفكم في مراجعات الفاينل إن شاء الله</h2>
-                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
-                  المعاد المقرر للفاينل حتى الآن من المعهد هو <strong class="text-[#071124]">2 / 1 / 2027</strong>.
-                </p>
-              </div>
-              <span class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-amber-100 text-amber-950 border border-amber-200 w-fit">
-                العد التنازلي للفاينل شغال
-              </span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <button
-                type="button"
-                data-go-tab="lectures"
-                class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
-              >
-                <div class="text-sm font-black text-[#071124]">📚 ملخصات المحاضرات</div>
-                <div class="text-xs text-slate-600">متابعة ملخصات المواد والشُعب أول بأول.</div>
-              </button>
-
-              <button
-                type="button"
-                data-go-tab="assignments"
-                class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
-              >
-                <div class="text-sm font-black text-[#071124]">📝 التكليفات حسب الشُعب</div>
-                <div class="text-xs text-slate-600">مراجعة الشيتات والأبحاث والمناقشات المطلوبة ومواعيدها.</div>
-              </button>
-
-              <button
-                type="button"
-                data-go-tab="weekly"
-                class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
-              >
-                <div class="text-sm font-black text-[#071124]">🎯 الأسئلة الأسبوعية</div>
-                <div class="text-xs text-slate-600">تجميعات الأسئلة الأسبوعية استعداداً لمراجعات الفاينل.</div>
-              </button>
-            </div>
+          <div id="cd-status" class="text-[11px] font-bold text-slate-300">
+            ${c.expired ? "بدأ موعد امتحانات الفاينل (2 / 1 / 2027)" : "الموعد المقرر للفاينل حتى الآن من المعهد: 2 / 1 / 2027"}
           </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button type="button" data-go-tab="lectures" class="clean-card rounded-2xl p-4 text-right hover:bg-slate-50 transition cursor-pointer space-y-1">
+            <div class="text-sm font-black text-[#071124]">📚 ملخصات المحاضرات</div>
+            <div class="text-xs text-slate-500">متابعة المحاضرات أول بأول</div>
+          </button>
+
+          <button type="button" data-go-tab="assignments" class="clean-card rounded-2xl p-4 text-right hover:bg-slate-50 transition cursor-pointer space-y-1">
+            <div class="text-sm font-black text-[#071124]">📝 التكليفات</div>
+            <div class="text-xs text-slate-500">الشيتات والأبحاث والمناقشات</div>
+          </button>
+
+          <button type="button" data-go-tab="weekly" class="clean-card rounded-2xl p-4 text-right hover:bg-slate-50 transition cursor-pointer space-y-1">
+            <div class="text-sm font-black text-[#071124]">🎯 الأسئلة الأسبوعية</div>
+            <div class="text-xs text-slate-500">مراجعة أسبوعية قبل الفاينل</div>
+          </button>
         </div>
       `;
 
-      bindStudentQuickBar();
+      bindPrefAndIosStrip();
       document.querySelectorAll("[data-go-tab]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.activeTab = btn.getAttribute("data-go-tab");
@@ -1160,7 +1016,7 @@
     }
 
     // =====================================================================
-    // 11. محرك حل الأسئلة والنتيجة للأسئلة الأسبوعية
+    // 9. محرك حل الأسئلة والنتيجة
     // =====================================================================
     function getActiveQuizTitle() {
       const pack = liveStore.weeklyQuizzes.find((p) => p.id === state.selectedWeeklyId);
@@ -1190,19 +1046,19 @@
       const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
 
       let grade = "يحتاج مراجعة";
-      let gradeCls = "bg-rose-100 text-rose-800 border-rose-200";
+      let gradeCls = "bg-rose-100 text-rose-800";
       if (pct >= 85) {
         grade = "امتياز";
-        gradeCls = "bg-emerald-100 text-emerald-800 border-emerald-200";
+        gradeCls = "bg-emerald-100 text-emerald-800";
       } else if (pct >= 75) {
         grade = "جيد جداً";
-        gradeCls = "bg-indigo-100 text-indigo-800 border-indigo-200";
+        gradeCls = "bg-indigo-100 text-indigo-800";
       } else if (pct >= 60) {
         grade = "جيد";
-        gradeCls = "bg-amber-100 text-amber-900 border-amber-200";
+        gradeCls = "bg-amber-100 text-amber-900";
       } else if (pct >= 50) {
         grade = "مقبول";
-        gradeCls = "bg-orange-100 text-orange-900 border-orange-200";
+        gradeCls = "bg-orange-100 text-orange-900";
       }
 
       return { correct, wrong, unanswered, total, pct, grade, gradeCls, wrongIds };
@@ -1221,155 +1077,100 @@
       const chosen = state.answers[q.id];
       const isInstant = state.gradingMode === "instant";
       const isLocked = isInstant && Boolean(state.locked[q.id]);
-      const secLabel = q.section === "tf" ? "صح أم خطأ" : "اختيار من متعدد";
       const letters = ["أ", "ب", "ج", "د"];
 
       appEl.innerHTML = `
-        <div class="space-y-5">
-          <div class="surface-card rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                id="exit-quiz-btn"
-                class="px-3 py-1 rounded-xl text-xs font-black bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer"
-              >
-                ✕ إنهاء
-              </button>
-              <span class="px-3 py-1 rounded-xl text-xs font-black bg-[#071124] text-white">
-                سؤال ${state.currentIdx + 1} / ${total}
-              </span>
-              <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-900 border border-indigo-200">
-                ${escapeHtml(quizTitle)} • ${secLabel}
-              </span>
-            </div>
+        <div class="clean-card rounded-2xl px-4 py-2.5 flex items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <button type="button" id="exit-quiz-btn" class="px-2.5 py-1 rounded-lg font-black bg-slate-100 text-slate-800 cursor-pointer">✕ إنهاء</button>
+            <span class="font-black text-[#071124]">سؤال ${state.currentIdx + 1} / ${total}</span>
+          </div>
+          <button type="button" id="toggle-instant-live" class="px-2.5 py-1 rounded-lg font-extrabold border cursor-pointer ${
+            isInstant ? "bg-emerald-50 text-emerald-900 border-emerald-200" : "bg-slate-50 text-slate-600 border-slate-200"
+          }">
+            ${isInstant ? "تصحيح فوري: مفعل" : "تصحيح فوري"}
+          </button>
+        </div>
 
+        <div class="clean-card rounded-2xl p-4 sm:p-6 space-y-5">
+          <div class="text-[11px] font-bold text-slate-400">${escapeHtml(quizTitle)}</div>
+          <h2 class="text-sm sm:text-lg font-black text-[#071124] leading-relaxed">${escapeHtml(q.question)}</h2>
+
+          <div class="space-y-2">
+            ${q.options
+              .map((opt, idx) => {
+                const isSelected = chosen === opt;
+                let cls = "border-slate-200 bg-white text-slate-800";
+                let badge = "";
+
+                if (isInstant && chosen !== undefined) {
+                  if (opt === q.correctAnswer) {
+                    cls = "border-emerald-500 bg-emerald-50 text-emerald-950";
+                    badge = `<span class="text-[11px] font-black text-emerald-700">صحيح ✓</span>`;
+                  } else if (isSelected) {
+                    cls = "border-rose-500 bg-rose-50 text-rose-950";
+                    badge = `<span class="text-[11px] font-black text-rose-700">✕</span>`;
+                  } else {
+                    cls = "border-slate-100 bg-slate-50 text-slate-400";
+                  }
+                } else if (isSelected) {
+                  cls = "border-[#071124] bg-slate-50 text-[#071124]";
+                  badge = `<span class="text-[11px] font-black text-[#071124]">✓</span>`;
+                }
+
+                const prefix = q.section === "mcq" ? `${letters[idx] || idx + 1} - ` : "";
+
+                return `
+                  <button
+                    type="button"
+                    ${isLocked ? "disabled" : ""}
+                    data-choose="${encodeURIComponent(opt)}"
+                    class="choice-btn w-full text-right p-3.5 rounded-xl border-2 flex items-center justify-between gap-3 ${
+                      isLocked ? "cursor-not-allowed" : "cursor-pointer"
+                    } ${cls}"
+                  >
+                    <span class="font-bold text-xs sm:text-sm">${prefix}${escapeHtml(opt)}</span>
+                    ${badge}
+                  </button>
+                `;
+              })
+              .join("")}
+          </div>
+
+          ${
+            isInstant && chosen !== undefined
+              ? `<div class="p-3.5 rounded-xl border text-xs leading-relaxed ${
+                  chosen === q.correctAnswer
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-950"
+                    : "bg-amber-50 border-amber-200 text-amber-950"
+                }">
+                  <div class="font-black mb-0.5">
+                    ${chosen === q.correctAnswer ? "إجابة صحيحة ✓" : `الصحيح: (${escapeHtml(q.correctAnswer)})`}
+                  </div>
+                  <div>${escapeHtml(q.explanation || "")}</div>
+                </div>`
+              : ""
+          }
+
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
             <button
               type="button"
-              id="toggle-instant-live"
-              class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                isInstant
-                  ? "bg-emerald-50 text-emerald-900 border-emerald-300"
-                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-              }"
+              id="prev-q-btn"
+              ${state.currentIdx === 0 ? "disabled" : ""}
+              class="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 disabled:opacity-40 cursor-pointer"
             >
-              ${isInstant ? "التصحيح الفوري: مفعل" : "تفعيل التصحيح الفوري"}
+              → السابق
             </button>
-          </div>
 
-          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-6">
-            <h2 class="text-base sm:text-xl font-black text-[#071124] leading-relaxed">
-              ${escapeHtml(q.question)}
-            </h2>
-
-            <div class="space-y-2.5">
-              ${q.options
-                .map((opt, idx) => {
-                  const isSelected = chosen === opt;
-                  let cls = "border-slate-200 bg-white hover:bg-slate-50 text-slate-800";
-                  let badge = "";
-
-                  if (isInstant && chosen !== undefined) {
-                    if (opt === q.correctAnswer) {
-                      cls = "border-emerald-500 bg-emerald-50 text-emerald-950";
-                      badge = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-600 text-white">صحيح ✓</span>`;
-                    } else if (isSelected) {
-                      cls = "border-rose-500 bg-rose-50 text-rose-950";
-                      badge = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white">اختيارك ✕</span>`;
-                    } else {
-                      cls = "border-slate-200 bg-slate-50 text-slate-400";
-                    }
-                  } else if (isSelected) {
-                    cls = "border-[#071124] bg-[#071124]/5 text-[#071124]";
-                    badge = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-[#071124] text-white">محدد</span>`;
-                  }
-
-                  const prefix = q.section === "mcq" ? `${letters[idx] || idx + 1} - ` : "";
-
-                  return `
-                    <button
-                      type="button"
-                      ${isLocked ? "disabled" : ""}
-                      data-choose="${encodeURIComponent(opt)}"
-                      class="choice-btn w-full text-right p-3.5 sm:p-4 rounded-2xl border-2 flex items-center justify-between gap-3 ${
-                        isLocked ? "cursor-not-allowed" : "cursor-pointer"
-                      } ${cls}"
-                    >
-                      <span class="font-bold text-sm sm:text-base">${prefix}${escapeHtml(opt)}</span>
-                      ${badge}
-                    </button>
-                  `;
-                })
-                .join("")}
-            </div>
-
-            ${
-              isInstant && chosen !== undefined
-                ? `
-                  <div class="p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed ${
-                    chosen === q.correctAnswer
-                      ? "bg-emerald-50 border-emerald-200 text-emerald-950"
-                      : "bg-amber-50 border-amber-200 text-amber-950"
-                  }">
-                    <div class="font-black mb-1">
-                      ${chosen === q.correctAnswer ? "إجابة صحيحة ✓" : `الإجابة الصحيحة هي: (${escapeHtml(q.correctAnswer)})`}
-                    </div>
-                    <div>${escapeHtml(q.explanation || "")}</div>
-                  </div>
-                `
-                : ""
-            }
-
-            <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-              <button
-                type="button"
-                id="prev-q-btn"
-                ${state.currentIdx === 0 ? "disabled" : ""}
-                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
-              >
-                → السابق
+            <div class="flex items-center gap-2">
+              ${
+                state.currentIdx < total - 1
+                  ? `<button type="button" id="next-q-btn" class="px-4 py-2 rounded-xl text-xs font-black bg-[#071124] text-white cursor-pointer">التالي ←</button>`
+                  : ""
+              }
+              <button type="button" id="submit-exam-btn" class="px-4 py-2 rounded-xl text-xs font-black bg-emerald-600 text-white cursor-pointer">
+                تسليم ✓
               </button>
-
-              <div class="flex items-center gap-2">
-                ${
-                  state.currentIdx < total - 1
-                    ? `<button type="button" id="next-q-btn" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-[#071124] hover:bg-[#102447] text-white transition cursor-pointer">
-                        التالي ←
-                      </button>`
-                    : ""
-                }
-                <button
-                  type="button"
-                  id="submit-exam-btn"
-                  class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white transition cursor-pointer"
-                >
-                  تسليم وعرض النتيجة ✓
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="surface-card rounded-2xl p-4">
-            <div class="text-xs font-extrabold text-slate-600 mb-2.5">الانتقال السريع بين الأسئلة</div>
-            <div class="flex flex-wrap gap-1.5">
-              ${state.questions
-                .map((item, idx) => {
-                  const isCur = idx === state.currentIdx;
-                  const isAns = state.answers[item.id] !== undefined;
-                  let cls = "bg-slate-100 text-slate-700 hover:bg-slate-200";
-                  if (isCur) cls = "bg-[#071124] text-white ring-2 ring-amber-400";
-                  else if (isAns) cls = "bg-emerald-100 text-emerald-900 border border-emerald-300";
-
-                  return `
-                    <button
-                      type="button"
-                      data-jump-idx="${idx}"
-                      class="w-8 h-8 rounded-xl text-xs font-extrabold transition cursor-pointer ${cls}"
-                    >
-                      ${idx + 1}
-                    </button>
-                  `;
-                })
-                .join("")}
             </div>
           </div>
         </div>
@@ -1383,13 +1184,11 @@
       document.querySelectorAll("[data-choose]").forEach((btn) => {
         btn.addEventListener("click", () => {
           if (isInstant && state.locked[q.id]) {
-            showToast("تم تثبيت إجابة هذا السؤال في وضع التصحيح الفوري.");
+            showToast("تم تثبيت إجابة هذا السؤال");
             return;
           }
           state.answers[q.id] = decodeURIComponent(btn.getAttribute("data-choose"));
-          if (state.gradingMode === "instant") {
-            state.locked[q.id] = true;
-          }
+          if (state.gradingMode === "instant") state.locked[q.id] = true;
           updateProgressBar();
           renderQuizEngine();
         });
@@ -1426,24 +1225,10 @@
       }
 
       document.getElementById("submit-exam-btn").addEventListener("click", () => {
-        const res = calculateResult();
-        if (res.unanswered > 0) {
-          showToast(`تم التصحيح (يوجد ${res.unanswered} سؤال بدون إجابة).`);
-        }
         state.resultFilter = "all";
         state.quizView = "result";
         render();
         window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-
-      document.querySelectorAll("[data-jump-idx]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const idx = Number(btn.getAttribute("data-jump-idx"));
-          if (!Number.isNaN(idx)) {
-            state.currentIdx = idx;
-            renderQuizEngine();
-          }
-        });
       });
     }
 
@@ -1459,137 +1244,67 @@
       });
 
       appEl.innerHTML = `
-        <div class="space-y-6">
-          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-5">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <span class="px-3 py-1 rounded-full text-xs font-black border ${res.gradeCls}">
-                  التقدير: ${res.grade}
-                </span>
-                <h2 class="text-xl sm:text-2xl font-black text-[#071124] mt-2">
-                  نتيجة: ${escapeHtml(quizTitle)}
-                </h2>
-              </div>
-
-              <div class="bg-[#071124] text-white rounded-2xl px-5 py-3 text-center">
-                <div class="text-2xl sm:text-3xl font-black text-amber-400">${res.pct}%</div>
-                <div class="text-xs font-bold text-slate-200">${res.correct} من ${res.total}</div>
-              </div>
+        <div class="clean-card rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <span class="px-2.5 py-0.5 rounded-md text-xs font-black ${res.gradeCls}">${res.grade}</span>
+              <h2 class="text-base sm:text-xl font-black text-[#071124] mt-1">${escapeHtml(quizTitle)}</h2>
             </div>
-
-            <div class="grid grid-cols-3 gap-3 text-center">
-              <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
-                <div class="text-lg sm:text-xl font-black text-emerald-800">${res.correct}</div>
-                <div class="text-xs font-bold text-emerald-700">صحيحة</div>
-              </div>
-              <div class="p-3 rounded-2xl bg-rose-50 border border-rose-200">
-                <div class="text-lg sm:text-xl font-black text-rose-800">${res.wrong}</div>
-                <div class="text-xs font-bold text-rose-700">خاطئة</div>
-              </div>
-              <div class="p-3 rounded-2xl bg-slate-100 border border-slate-200">
-                <div class="text-lg sm:text-xl font-black text-slate-800">${res.unanswered}</div>
-                <div class="text-xs font-bold text-slate-600">غير مجابة</div>
-              </div>
-            </div>
-
-            <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
-              ${
-                res.wrongIds.length > 0
-                  ? `<button type="button" id="retry-wrong-btn" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-rose-100 hover:bg-rose-200 text-rose-900 border border-rose-200 transition cursor-pointer">
-                      مراجعة الأخطاء فقط (${res.wrongIds.length})
-                    </button>`
-                  : ""
-              }
-              <button type="button" id="back-to-setup-btn" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black bg-[#071124] hover:bg-[#102447] text-white transition cursor-pointer">
-                العودة لقائمة الاختبارات
-              </button>
+            <div class="bg-[#071124] text-white rounded-xl px-4 py-2 text-center">
+              <div class="text-xl font-black text-amber-400">${res.pct}%</div>
+              <div class="text-[11px] font-bold">${res.correct}/${res.total}</div>
             </div>
           </div>
 
-          <div class="surface-card rounded-3xl p-5 sm:p-7 space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <h3 class="text-base sm:text-lg font-black text-[#071124]">مراجعة الإجابات والتعليل</h3>
-              <div class="flex items-center gap-1.5">
-                ${[
-                  { id: "all", label: `الكل (${state.questions.length})` },
-                  { id: "wrong", label: `الأخطاء (${res.wrongIds.length})` },
-                  { id: "correct", label: `الصحيحة (${res.correct})` }
-                ]
-                  .map(
-                    (tab) => `
-                      <button
-                        type="button"
-                        data-rfilter="${tab.id}"
-                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                          state.resultFilter === tab.id
-                            ? "bg-[#071124] text-white border-[#071124]"
-                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                        }"
-                      >
-                        ${tab.label}
-                      </button>
-                    `
-                  )
-                  .join("")}
-              </div>
+          <div class="grid grid-cols-3 gap-2 text-center text-xs">
+            <div class="p-2.5 rounded-xl bg-emerald-50 text-emerald-900 font-black">صحيحة: ${res.correct}</div>
+            <div class="p-2.5 rounded-xl bg-rose-50 text-rose-900 font-black">خاطئة: ${res.wrong}</div>
+            <div class="p-2.5 rounded-xl bg-slate-100 text-slate-700 font-black">لم تُجب: ${res.unanswered}</div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+            ${
+              res.wrongIds.length > 0
+                ? `<button type="button" id="retry-wrong-btn" class="px-3.5 py-2 rounded-xl text-xs font-black bg-rose-100 text-rose-900 cursor-pointer">مراجعة الأخطاء (${res.wrongIds.length})</button>`
+                : ""
+            }
+            <button type="button" id="back-to-setup-btn" class="px-4 py-2 rounded-xl text-xs font-black bg-[#071124] text-white cursor-pointer">العودة للقائمة</button>
+          </div>
+        </div>
+
+        <div class="clean-card rounded-2xl p-4 sm:p-5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-sm font-black text-[#071124]">مراجعة الإجابات</h3>
+            <div class="flex gap-1.5">
+              ${[
+                { id: "all", label: "الكل" },
+                { id: "wrong", label: "الأخطاء" },
+                { id: "correct", label: "الصحيحة" }
+              ]
+                .map(
+                  (t) => `<button type="button" data-rfilter="${t.id}" class="px-2.5 py-1 rounded-lg text-xs font-extrabold border cursor-pointer ${
+                    state.resultFilter === t.id ? "bg-[#071124] text-white border-[#071124]" : "bg-slate-50 text-slate-700 border-slate-200"
+                  }">${t.label}</button>`
+                )
+                .join("")}
             </div>
+          </div>
 
-            <div class="space-y-3.5">
-              ${
-                filtered.length === 0
-                  ? `<div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center text-xs sm:text-sm font-extrabold text-emerald-900">
-                      لا توجد أسئلة في هذا التصنيف.
-                    </div>`
-                  : filtered
-                      .map((q) => {
-                        const userAns = state.answers[q.id];
-                        const ok = userAns === q.correctAnswer;
-                        return `
-                          <div class="p-4 rounded-2xl border-2 space-y-2.5 ${
-                            ok ? "border-emerald-200 bg-emerald-50/30" : "border-rose-200 bg-rose-50/30"
-                          }">
-                            <div class="flex items-center justify-between gap-2">
-                              <span class="text-xs font-black text-slate-700">
-                                ${q.section === "tf" ? "صح وخطأ" : "اختيار من متعدد"} • سؤال (${q.number})
-                              </span>
-                              <span class="px-2.5 py-0.5 rounded-full text-xs font-black ${
-                                ok ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"
-                              }">
-                                ${ok ? "صحيحة ✓" : userAns === undefined ? "غير مجاب" : "خاطئة ✕"}
-                              </span>
-                            </div>
-
-                            <div class="text-sm sm:text-base font-extrabold text-[#071124] leading-relaxed">
-                              ${escapeHtml(q.question)}
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
-                              <div class="p-2.5 rounded-xl bg-white border border-slate-200">
-                                <span class="font-bold text-slate-600">إجابتك: </span>
-                                <span class="font-black ${ok ? "text-emerald-700" : "text-rose-700"}">
-                                  ${userAns !== undefined ? escapeHtml(userAns) : "لم يتم الاختيار"}
-                                </span>
-                              </div>
-                              <div class="p-2.5 rounded-xl bg-white border border-emerald-200">
-                                <span class="font-bold text-slate-600">الإجابة الصحيحة: </span>
-                                <span class="font-black text-emerald-800">${escapeHtml(q.correctAnswer)}</span>
-                              </div>
-                            </div>
-
-                            ${
-                              q.explanation
-                                ? `<div class="p-3 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                                    <span class="font-black text-[#071124]">التعليل: </span>
-                                    ${escapeHtml(q.explanation)}
-                                  </div>`
-                                : ""
-                            }
-                          </div>
-                        `;
-                      })
-                      .join("")
-              }
-            </div>
+          <div class="space-y-2.5">
+            ${filtered
+              .map((q) => {
+                const userAns = state.answers[q.id];
+                const ok = userAns === q.correctAnswer;
+                return `
+                  <div class="p-3.5 rounded-xl border ${ok ? "border-emerald-200 bg-emerald-50/30" : "border-rose-200 bg-rose-50/30"} space-y-1.5 text-xs">
+                    <div class="font-black text-[#071124]">${escapeHtml(q.question)}</div>
+                    <div class="font-bold">إجابتك: <span class="${ok ? "text-emerald-700" : "text-rose-700"}">${userAns !== undefined ? escapeHtml(userAns) : "لم يتم الاختيار"}</span></div>
+                    <div class="font-bold text-emerald-800">الإجابة الصحيحة: ${escapeHtml(q.correctAnswer)}</div>
+                    ${q.explanation ? `<div class="text-slate-600 pt-1 border-t border-slate-200/60">${escapeHtml(q.explanation)}</div>` : ""}
+                  </div>
+                `;
+              })
+              .join("")}
           </div>
         </div>
       `;
@@ -1623,7 +1338,7 @@
     }
 
     // =====================================================================
-    // 12. دالة العرض الرئيسية
+    // 10. التشغيل الرئيسي
     // =====================================================================
     function render() {
       updateNavTabs();
