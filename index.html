@@ -110,7 +110,7 @@
           🎯 الأسئلة الأسبوعية
         </button>
         <button type="button" data-tab="midterm" class="nav-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer">
-          📌 أسئلة الميدتيرم
+          🎓 الفاينل والميدتيرم
         </button>
       </div>
     </nav>
@@ -142,12 +142,15 @@
   <!-- =====================================================================
        الحاوية الرئيسية للمحتوى
   ====================================================================== -->
-  <main id="app-root" class="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8"></main>
+  <main id="app-root" class="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5"></main>
 
   <!-- =====================================================================
-       تذييل الصفحة وحقوق التصميم
+       تنويه الاستقلالية + تذييل الصفحة وحقوق التصميم
   ====================================================================== -->
   <footer class="bg-[#071124] text-slate-300 border-t border-white/10 mt-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 border-b border-white/10 text-[11px] sm:text-xs text-slate-300 text-center font-semibold">
+      تنويه: منصة «طلاب MCI» مبادرة طلابية مستقلة لخدمة طلاب الفرقة الأولى — دفعة 2026، وغير تابعة رسمياً لإدارة المعهد.
+    </div>
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-bold text-center sm:text-right">
       <div>
         حقوق تصميم الموقع للطالب <span class="text-amber-300 font-black">محمود احمد</span>
@@ -158,9 +161,6 @@
     </div>
   </footer>
 
-  <!-- ملف البيانات المحلي (يحتوي على بنك أسئلة الميدتيرم كمرجع سريع) -->
-  <script src="data.js"></script>
-
   <script>
     // =====================================================================
     // 1. إعدادات الاتصال بـ Supabase
@@ -168,6 +168,10 @@
     const SUPABASE_URL = "https://rspibcrdzccmtypewkul.supabase.co";
     const SUPABASE_KEY = "sb_publishable_EAqDKk3U8UpZ2VCO9itiwQ_qpYHigKF";
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const FINALS_DATE_ISO = "2027-01-02T00:00:00";
+    const SAVED_BRANCH_KEY = "mci_student_branch_2026";
+    const HIDE_IOS_TIP_KEY = "mci_hide_ios_tip_2026";
 
     // =====================================================================
     // 2. الثوابت الأساسية للمعهد والمواد والشُعب
@@ -196,17 +200,17 @@
       { id: "مناقشة", name: "مناقشة" }
     ];
 
-    const FALLBACK_DATA = window.MCI_DATA || {
-      midtermDate: "2026-11-24T00:00:00",
-      alerts: [],
-      lectures: [],
-      assignments: [],
-      weeklyQuizzes: [],
-      midtermCourses: {},
-      finishedMidtermCourses: []
-    };
+    function getSavedBranch() {
+      const val = localStorage.getItem(SAVED_BRANCH_KEY);
+      return BRANCHES_LIST.some((b) => b.id === val) ? val : "all";
+    }
 
-    // مخزن البيانات الحية من Supabase
+    function savePreferredBranch(branchId) {
+      localStorage.setItem(SAVED_BRANCH_KEY, branchId);
+      state.lectureBranch = branchId;
+      state.assignBranch = branchId;
+    }
+
     const liveStore = {
       loading: true,
       error: null,
@@ -216,36 +220,27 @@
       weeklyQuizzes: []
     };
 
+    const initialBranch = getSavedBranch();
+
     // =====================================================================
     // 3. حالة التطبيق العامة
     // =====================================================================
     const state = {
-      activeTab: "alerts", // 'alerts' | 'lectures' | 'assignments' | 'weekly' | 'midterm'
-
-      // فلاتر الملخصات
+      activeTab: "alerts",
       lectureSubject: "all",
-      lectureBranch: "all",
-
-      // فلاتر التكليفات
-      assignBranch: "all",
+      lectureBranch: initialBranch,
+      assignBranch: initialBranch,
       assignSubject: "all",
       assignType: "all",
-
-      // فلاتر التنبيهات
       alertSubject: "all",
-
-      // حالة الاختبار التفاعلي (تعمل لكل من الأسئلة الأسبوعية والميدتيرم)
-      quizSource: null, // 'weekly' | 'midterm'
-      quizView: "setup", // 'setup' | 'quiz' | 'result'
+      quizSource: null,
+      quizView: "setup",
       selectedWeeklyId: "",
-      midtermSubjectId: "politics",
-      sectionFilter: "all",
-      questionCountMode: "all",
-      gradingMode: "end",
       questions: [],
       currentIdx: 0,
       answers: {},
       locked: {},
+      gradingMode: "end",
       resultFilter: "all"
     };
 
@@ -310,7 +305,6 @@
         liveStore.lectures = lecturesRes.data || [];
         liveStore.assignments = assignmentsRes.data || [];
 
-        // تجميع الأسئلة الأسبوعية حسب week_label
         const groupedMap = new Map();
         (weeklyRes.data || []).forEach((row) => {
           const label = row.week_label || "أسئلة أسبوعية";
@@ -354,7 +348,7 @@
     }
 
     // =====================================================================
-    // 5. تحديث شريط التنقل وشريط التقدم
+    // 5. شريط التنقل + شريط التقدم + شريط الشعبة المفضلة وإرشاد الآيفون
     // =====================================================================
     function updateNavTabs() {
       document.querySelectorAll(".nav-tab").forEach((btn) => {
@@ -368,10 +362,7 @@
     }
 
     function updateProgressBar() {
-      const isQuizActive =
-        (state.activeTab === "midterm" || state.activeTab === "weekly") &&
-        state.quizView === "quiz";
-
+      const isQuizActive = state.activeTab === "weekly" && state.quizView === "quiz";
       if (!isQuizActive) {
         progressStrip.classList.add("hidden");
         return;
@@ -384,6 +375,67 @@
       progressLabel.textContent = `تمت الإجابة على ${answered} من ${total} سؤال`;
       progressPct.textContent = `${pct}%`;
       progressBar.style.width = `${pct}%`;
+    }
+
+    function renderStudentQuickBar() {
+      const savedBranch = getSavedBranch();
+      const showIosTip = localStorage.getItem(HIDE_IOS_TIP_KEY) !== "1";
+
+      return `
+        <div class="surface-card rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-black text-[#071124]">شعبتي المفضلة:</span>
+            ${BRANCHES_LIST.map((b) => {
+              const active = savedBranch === b.id;
+              return `
+                <button
+                  type="button"
+                  data-pref-branch="${b.id}"
+                  class="px-3 py-1 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
+                    active
+                      ? "bg-[#071124] text-white border-[#071124]"
+                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }"
+                >
+                  ${b.name}
+                </button>
+              `;
+            }).join("")}
+          </div>
+
+          ${
+            showIosTip
+              ? `<div class="flex items-center justify-between sm:justify-end gap-2 text-[11px] font-bold text-slate-600 bg-amber-50/80 border border-amber-200/80 px-3 py-1.5 rounded-xl">
+                  <span>آيفون: من Safari اضغط <strong>Share</strong> ثم <strong>Add to Home Screen</strong> لتثبيت الأيقونة.</span>
+                  <button type="button" id="hide-ios-tip-btn" class="text-slate-500 hover:text-slate-900 font-black cursor-pointer">✕</button>
+                </div>`
+              : `<span class="text-[11px] font-bold text-slate-500">يتم حفظ شعبتك تلقائياً على جهازك</span>`
+          }
+        </div>
+      `;
+    }
+
+    function bindStudentQuickBar() {
+      document.querySelectorAll("[data-pref-branch]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const bId = btn.getAttribute("data-pref-branch");
+          savePreferredBranch(bId);
+          showToast(
+            bId === "all"
+              ? "تم ضبط العرض على كل الشُعب"
+              : `تم حفظ شعبتك (${getBranchName(bId)}) تلقائياً ✓`
+          );
+          render();
+        });
+      });
+
+      const hideBtn = document.getElementById("hide-ios-tip-btn");
+      if (hideBtn) {
+        hideBtn.addEventListener("click", () => {
+          localStorage.setItem(HIDE_IOS_TIP_KEY, "1");
+          render();
+        });
+      }
     }
 
     function renderLoadingBox(text = "جاري تحميل أحدث البيانات من السيرفر...") {
@@ -407,6 +459,8 @@
       });
 
       appEl.innerHTML = `
+        ${renderStudentQuickBar()}
+
         <div class="space-y-5">
           <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
             <h1 class="text-xl sm:text-2xl font-black text-white">🔔 التنبيهات وملاحظات الدكاترة</h1>
@@ -483,6 +537,7 @@
         </div>
       `;
 
+      bindStudentQuickBar();
       document.querySelectorAll("[data-alert-subj]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.alertSubject = btn.getAttribute("data-alert-subj");
@@ -504,11 +559,13 @@
       });
 
       appEl.innerHTML = `
+        ${renderStudentQuickBar()}
+
         <div class="space-y-5">
           <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
             <h1 class="text-xl sm:text-2xl font-black text-white">📚 ملخصات المحاضرات</h1>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              ملخصات منظمة لكل محاضرة حسب المادة. ملحوظة: مادة <strong>مبادئ إدارة الأعمال</strong> يدرسها في نظم <strong>د. أحمد علي</strong> وفي محاسبة وتسويق <strong>د. نجلاء</strong>.
+              ملخصات منظمة لكل محاضرة حسب المادة والشعبة أول بأول.
             </p>
           </div>
 
@@ -535,7 +592,7 @@
             </div>
 
             <div>
-              <div class="text-xs font-black text-slate-600 mb-2">تصفية حسب الشعبة (خاصة لإدارة الأعمال):</div>
+              <div class="text-xs font-black text-slate-600 mb-2">تصفية حسب الشعبة:</div>
               <div class="flex flex-wrap items-center gap-2">
                 ${BRANCHES_LIST.map(
                   (b) => `
@@ -626,6 +683,7 @@
         </div>
       `;
 
+      bindStudentQuickBar();
       document.querySelectorAll("[data-lec-subj]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.lectureSubject = btn.getAttribute("data-lec-subj");
@@ -666,17 +724,19 @@
       };
 
       appEl.innerHTML = `
+        ${renderStudentQuickBar()}
+
         <div class="space-y-5">
           <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
             <h1 class="text-xl sm:text-2xl font-black text-white">📝 التكليفات المطلوبة (شيت • بحث • مناقشة)</h1>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              اختر شعبتك عشان تشوف الشيتات والأبحاث والمناقشات المطلوبة منك ومواعيد تسليمها بدون لخبطة بين الشُعب.
+              الشيتات والأبحاث والمناقشات المطلوبة حسب الشعبة والمادة ومواعيد التسليم.
             </p>
           </div>
 
           <div class="surface-card rounded-2xl p-4 space-y-4">
             <div>
-              <div class="text-xs font-black text-[#071124] mb-2">1. اختر الشعبة:</div>
+              <div class="text-xs font-black text-[#071124] mb-2">1. الشعبة:</div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 ${BRANCHES_LIST.map(
                   (b) => `
@@ -792,6 +852,7 @@
         </div>
       `;
 
+      bindStudentQuickBar();
       document.querySelectorAll("[data-asg-branch]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.assignBranch = btn.getAttribute("data-asg-branch");
@@ -826,11 +887,13 @@
       const selectedPack = packs.find((p) => p.id === state.selectedWeeklyId);
 
       appEl.innerHTML = `
+        ${renderStudentQuickBar()}
+
         <div class="space-y-5">
           <div class="surface-card rounded-3xl p-5 sm:p-6 bg-[#071124] text-white border-[#071124]">
             <h1 class="text-xl sm:text-2xl font-black text-white">🎯 الأسئلة الأسبوعية (تجميع أول بأول)</h1>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              اختبارات قصيرة وشاملة على كل اللي اتاخد خلال الأسبوع عشان نراجع أول بأول ونثبت المعلومة.
+              اختبارات قصيرة وشاملة على كل اللي اتاخد خلال الأسبوع للمراجعة أول بأول والاستعداد للفاينل.
             </p>
           </div>
 
@@ -918,6 +981,7 @@
         </div>
       `;
 
+      bindStudentQuickBar();
       document.querySelectorAll("[data-pick-weekly]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.selectedWeeklyId = btn.getAttribute("data-pick-weekly");
@@ -952,10 +1016,8 @@
     }
 
     // =====================================================================
-    // 10. إغلاق صفحة أسئلة الميدتيرم والعد التنازلي للفاينل (2 / 1 / 2027)
+    // 10. إغلاق صفحة الميدتيرم والعدّ التنازلي للفاينل (2 / 1 / 2027)
     // =====================================================================
-    const FINALS_DATE_ISO = "2027-01-02T00:00:00";
-
     function getCountdownParts() {
       const target = new Date(FINALS_DATE_ISO);
       const diff = target.getTime() - Date.now();
@@ -991,14 +1053,16 @@
       if (statusEl) {
         statusEl.textContent = c.expired
           ? "بدأ موعد امتحانات الفاينل (2 / 1 / 2027)"
-          : "الموعد المقرر للفاينل من المعهد: 2 / 1 / 2027";
+          : "الموعد المقرر للفاينل حتى الآن من المعهد: 2 / 1 / 2027";
       }
     }
 
-    function renderMidtermSetup() {
+    function renderFinalsClosedCard() {
       const c = getCountdownParts();
 
       appEl.innerHTML = `
+        ${renderStudentQuickBar()}
+
         <div class="space-y-6">
           <div class="surface-card rounded-3xl p-6 sm:p-8 bg-[#071124] text-white border-[#071124]">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -1006,7 +1070,7 @@
                 <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                   <span>✓ تم الانتهاء من امتحانات الميدتيرم</span>
                   <span>•</span>
-                  <span id="cd-status">${c.expired ? "بدأ موعد امتحانات الفاينل (2 / 1 / 2027)" : "الموعد المقرر للفاينل من المعهد: 2 / 1 / 2027"}</span>
+                  <span id="cd-status">${c.expired ? "بدأ موعد امتحانات الفاينل (2 / 1 / 2027)" : "الموعد المقرر للفاينل حتى الآن من المعهد: 2 / 1 / 2027"}</span>
                 </div>
 
                 <h1 class="text-2xl sm:text-3xl font-black text-white pt-1">
@@ -1014,7 +1078,7 @@
                 </h1>
 
                 <p class="text-sm sm:text-base text-slate-200 leading-relaxed font-semibold">
-                  صفحة أسئلة الميدتيرم أُغلقت بعد انتهاء المرحلة. بنكمّل مع بعض أول بأول في المحاضرات والتكليفات والأسئلة الأسبوعية، ونشوفكم في <span class="text-amber-300 font-black">مراجعات الفاينل إن شاء الله</span>.
+                  صفحة أسئلة الميدتيرم مغلقة حالياً بعد انتهاء المرحلة. نكمل سوا أول بأول في المحاضرات والتكليفات والأسئلة الأسبوعية، ونشوفكم في <span class="text-amber-300 font-black">مراجعات الفاينل إن شاء الله</span>.
                 </p>
               </div>
 
@@ -1042,13 +1106,13 @@
           <div class="surface-card rounded-3xl p-6 sm:p-7 space-y-5">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
               <div>
-                <h2 class="text-lg font-black text-[#071124]">استعدادنا للفترة القادمة حتى الفاينل</h2>
+                <h2 class="text-lg font-black text-[#071124]">نشوفكم في مراجعات الفاينل إن شاء الله</h2>
                 <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
-                  الموعد المقرر للفاينل حتى الآن من المعهد هو <strong class="text-[#071124]">2 / 1 / 2027</strong>.
+                  المعاد المقرر للفاينل حتى الآن من المعهد هو <strong class="text-[#071124]">2 / 1 / 2027</strong>.
                 </p>
               </div>
               <span class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-amber-100 text-amber-950 border border-amber-200 w-fit">
-                نشوفكم في مراجعات الفاينل إن شاء الله
+                العد التنازلي للفاينل شغال
               </span>
             </div>
 
@@ -1059,7 +1123,7 @@
                 class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
               >
                 <div class="text-sm font-black text-[#071124]">📚 ملخصات المحاضرات</div>
-                <div class="text-xs text-slate-600">تابع ملخصات المواد أول بأول مع توضيح إدارة الأعمال للشُعب.</div>
+                <div class="text-xs text-slate-600">متابعة ملخصات المواد والشُعب أول بأول.</div>
               </button>
 
               <button
@@ -1068,7 +1132,7 @@
                 class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
               >
                 <div class="text-sm font-black text-[#071124]">📝 التكليفات حسب الشُعب</div>
-                <div class="text-xs text-slate-600">راجع الشيتات والأبحاث والمناقشات المطلوبة لشعبتك ومواعيدها.</div>
+                <div class="text-xs text-slate-600">مراجعة الشيتات والأبحاث والمناقشات المطلوبة ومواعيدها.</div>
               </button>
 
               <button
@@ -1077,13 +1141,14 @@
                 class="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-right transition cursor-pointer space-y-1"
               >
                 <div class="text-sm font-black text-[#071124]">🎯 الأسئلة الأسبوعية</div>
-                <div class="text-xs text-slate-600">حل تجميعات الأسئلة الأسبوعية عشان تبقى جاهز لمراجعات الفاينل.</div>
+                <div class="text-xs text-slate-600">تجميعات الأسئلة الأسبوعية استعداداً لمراجعات الفاينل.</div>
               </button>
             </div>
           </div>
         </div>
       `;
 
+      bindStudentQuickBar();
       document.querySelectorAll("[data-go-tab]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.activeTab = btn.getAttribute("data-go-tab");
@@ -1093,16 +1158,13 @@
         });
       });
     }
+
     // =====================================================================
-    // 11. محرك حل الأسئلة والنتيجة المشترك (للميدتيرم والأسئلة الأسبوعية)
+    // 11. محرك حل الأسئلة والنتيجة للأسئلة الأسبوعية
     // =====================================================================
     function getActiveQuizTitle() {
-      if (state.quizSource === "weekly") {
-        const pack = liveStore.weeklyQuizzes.find((p) => p.id === state.selectedWeeklyId);
-        return pack ? pack.title : "الأسئلة الأسبوعية";
-      }
-      const subj = (FALLBACK_DATA.midtermCourses || {})[state.midtermSubjectId];
-      return subj ? subj.title : "أسئلة الميدتيرم";
+      const pack = liveStore.weeklyQuizzes.find((p) => p.id === state.selectedWeeklyId);
+      return pack ? pack.title : "الأسئلة الأسبوعية";
     }
 
     function calculateResult() {
@@ -1578,12 +1640,8 @@
         else if (state.quizView === "result") renderResultEngine();
         else renderWeeklySetup();
       } else if (state.activeTab === "midterm") {
-        if (state.quizView === "quiz") renderQuizEngine();
-        else if (state.quizView === "result") renderResultEngine();
-        else {
-          renderMidtermSetup();
-          updateCountdownDOM();
-        }
+        renderFinalsClosedCard();
+        updateCountdownDOM();
       }
     }
 
@@ -1604,7 +1662,6 @@
       document.getElementById("toast-box").classList.add("hidden");
     });
 
-    // بدء التشغيل وجلب البيانات من Supabase
     loadFromSupabase(false);
     setInterval(updateCountdownDOM, 1000);
   </script>
